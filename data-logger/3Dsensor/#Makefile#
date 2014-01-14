@@ -24,8 +24,6 @@ connect2:connect2.cpp
 	g++ -o connect2 connect2.cpp -lssm -lm
 scandataR2:scandataR2.cpp
 	gcc scandataR2.cpp  -lglut -lGLU -lGL -lm -lssm -o scandataR2
-LS3DViewer:LS3DViewer.cpp
-	g++ -o LS3DViewer LS3DViewer.cpp  -lglut -lGLU -lGL -lm -lssm
 objectR:objectR.cpp
 	gcc objectR.cpp  -lglut -lGLU -lGL -lm -lssm -o objectR
 beam_comeR:beam_comeR.cpp
