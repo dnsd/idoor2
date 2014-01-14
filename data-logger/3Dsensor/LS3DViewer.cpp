@@ -90,7 +90,8 @@ void display(void)
 
 	// 変換行列を設定（物体のモデル座標系→カメラ座標系）
 	//（物体が (0.0, 1.0, 0.0) の位置にあり、静止しているとする）
-	glTranslatef( -1000.0, 0.0, SENSOR_POS_Z);
+	// glTranslatef( -1000.0, 0.0, SENSOR_POS_Z);
+	glTranslatef(-1000.0, 0.0, 0.0);
 
 	if (SCAN_DATA.readNew())
 	{
