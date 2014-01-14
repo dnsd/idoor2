@@ -1,0 +1,27 @@
+ICRAのためのデータロガー。
+TopURGと3Dsensorのデータを同期しながら取得する。
+
+*SSM情報*
+id:0
+name:Door-Sensor
+type:3Dsensor
+
+id:1
+name:Top-URG
+type:LRF
+
+＊データ取得手順＊
+dialoutグループに自分を追加する。
+rpデータを取得する。
+dmesgでデバイスポートを確認。
+以下のプログラムを起動する。
+　・ssm-coordinator
+　・./connect
+　・./urg2ssm
+以下のシェルスクリプトを起動する。
+　・logger_3Dsensor（ドアセンサのデータだけ欲しいとき）
+　・logger_2sensors（2つのセンサのデータが欲しいとき）
+
+
+
+
