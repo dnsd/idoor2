@@ -174,6 +174,18 @@ void display(void)
         glutSolidSphere(100.0, 20, 20);//引数：(半径, Z軸まわりの分割数, Z軸に沿った分割数)
         glPopMatrix();
 
+                // //円周を線だけで表示(1000)
+	//     glBegin( GL_LINE_LOOP );
+	//     float cx, cy, cz; 
+	//     glColor3f( 0.0, 0.0, 0.0 );//white
+	//     for(int i=0;i<=180;i++){
+	//     cx = 1000.0*sin(M_PI*(double)i/(double)180.0);
+	//     cy = 1000.0*cos(M_PI*(double)i/(double)180.0);
+	//     cz = -SENSOR_HEIGHT;
+	//     glVertex3f( cx, cy, cz );
+	//     }
+	//     glEnd();
+
         glutSwapBuffers();
 	} //if(SCAN_DATA.readNew)
 	sleepSSM(0.05);

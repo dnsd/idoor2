@@ -1,26 +1,20 @@
-//10Hz
+//10Hz用
 
 #include <iostream>
 #include "LS3D.h"
 #include <ssm.hpp>
-#include <iomanip>
 #include <GL/glut.h>
 #include <fstream>
 #include <sys/time.h>
-#include <time.h>
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-#define POINTSIZE 2
+#define pointsize 2
 
-// #define SENSOR_HEIGHT 2500
-#define SENSOR_HEIGHT 3000
+#define SENSOR_POS_X 600.0
+#define SENSOR_POS_Y 0.0
+#define SENSOR_POS_Z 2600.0
 #define STEP_NUM_MAX 2720
-
-const double AREA_E_START_Y = -1700.0;
-const double AREA_E_END_Y = 1700.0;
-const double AREA_E_START_X = 0.0;
-const double AREA_E_END_X = 2200.0;
 
 using namespace std;
 
@@ -49,7 +43,7 @@ void idle(void);
 void initEnvironment(void);
 
 //-SSM-//
-SSMApi<LS3D> OBJECT("OBJECT", 1);
+SSMApi<LS3D> OBJECT("LS3D", 1);
 
 int main(int argc, char **argv)
 {
@@ -96,7 +90,8 @@ void display(void)
 
 	// 変換行列を設定（物体のモデル座標系→カメラ座標系）
 	//（物体が (0.0, 1.0, 0.0) の位置にあり、静止しているとする）
-	glTranslatef( -1000.0, 0.0, SENSOR_HEIGHT);
+	// glTranslatef( -1000.0, 0.0, SENSOR_POS_Z);
+	glTranslatef(-1000.0, 0.0, 0.0);
 
 	if (OBJECT.readNew())
 	{
@@ -123,56 +118,63 @@ void display(void)
         //スキャン点の描画  
         glLineWidth(1.0); 
         glClear(GL_COLOR_BUFFER_BIT);
-        glPointSize(POINTSIZE);
+        glPointSize(pointsize);
         glBegin(GL_POINTS);
-        for(int j=0; j<STEP_NUM_MAX; j++)
+        for(int j=0; j<2720; j++)
          {
              glColor3d(1.0, 0.0, 0.0);
              glVertex3d(vertex_U[j][0], vertex_U[j][1], vertex_U[j][2]);
          }
-         for(int j=0; j<STEP_NUM_MAX; j++)
+         for(int j=0; j<2720; j++)
          {
              glColor3d(0.0, 0.0, 1.0);
              glVertex3d(vertex_D[j][0], vertex_D[j][1], vertex_D[j][2]);
          }
          glEnd();
 
-        // //1メートルのエリア
-        // glColor3d(0.0, 0.0, 0.0);
-        // glBegin(GL_LINE_LOOP);
-        // glVertex3d(0.0, -1000.0, -SENSOR_HEIGHT);
-        // glVertex3d(1000.0, -1000.0, -SENSOR_HEIGHT);
-        // glVertex3d(1000.0, 1000.0, -SENSOR_HEIGHT);
-        // glVertex3d(0.0, 1000.0, -SENSOR_HEIGHT);
-        // glEnd();
+        //1メートルのエリア
+        glColor3d(0.0, 0.0, 0.0);
+        glBegin(GL_LINE_LOOP);
+        glVertex3d(0.0, -1000.0, 0.0);
+        glVertex3d(1000.0, -1000.0, 0.0);
+        glVertex3d(1000.0, 1000.0, 0.0);
+        glVertex3d(0.0, 1000.0, 0.0);
+        glEnd();
 
         //監視領域(スポット)
         glColor3d(0.0, 0.0, 0.0);
         glBegin(GL_LINE_LOOP);
-        glVertex3d(AREA_E_START_X, AREA_E_START_Y, -SENSOR_HEIGHT);
-        glVertex3d(AREA_E_END_X, AREA_E_START_Y, -SENSOR_HEIGHT);
-        glVertex3d(AREA_E_END_X, AREA_E_END_Y, -SENSOR_HEIGHT);
-        glVertex3d(AREA_E_START_X, AREA_E_END_Y, -SENSOR_HEIGHT);
+        glVertex3d(0.0, -2200.0, 0.0);
+        glVertex3d(3000.0, -2200.0, 0.0);
+        glVertex3d(3000.0, 2200.0, 0.0);
+        glVertex3d(0.0, 2200.0, 0.0);
         glEnd();
 
         glColor3d(0.0, 0.0, 0.0);
         glBegin(GL_LINE_LOOP);
-        glVertex3d(0.0, 0.0, -SENSOR_HEIGHT);
-        glVertex3d(6000.0, -0.0, -SENSOR_HEIGHT);
+        glVertex3d(0.0, 0.0, 0.0);
+        glVertex3d(6000.0, -0.0, 0.0);
         glEnd();
 
         glColor3d(0.0, 0.0, 0.0);
         glBegin(GL_LINE_LOOP);
-        glVertex3d(0.0, 4000.0, -SENSOR_HEIGHT);
-        glVertex3d(0.0, -4000.0, -SENSOR_HEIGHT);
+        glVertex3d(0.0, 4000.0, 0.0);
+        glVertex3d(0.0, -4000.0, 0.0);
         glEnd();
 
         glBegin(GL_LINE_LOOP);
         glVertex3d(0.0, 0.0, 1000.0);
-        glVertex3d(0.0, 0.0, -SENSOR_HEIGHT);
+        glVertex3d(0.0, 0.0, 0.0);
         glEnd();
 
-        // //円周を線だけで表示(1000)
+        //センサ
+        glPushMatrix();
+        glColor3d(0.0, 0.0, 0.0); //色の設定
+        glTranslated(SENSOR_POS_X, SENSOR_POS_Y, SENSOR_POS_Z);//平行移動値の設定
+        glutSolidSphere(100.0, 20, 20);//引数：(半径, Z軸まわりの分割数, Z軸に沿った分割数)
+        glPopMatrix();
+
+                // //円周を線だけで表示(1000)
 	//     glBegin( GL_LINE_LOOP );
 	//     float cx, cy, cz; 
 	//     glColor3f( 0.0, 0.0, 0.0 );//white
@@ -184,44 +186,9 @@ void display(void)
 	//     }
 	//     glEnd();
 
-	//     //円周を線だけで表示(2000)
-	//     glBegin( GL_LINE_LOOP );
-	//     cx = 0.0;
-	//     cy = 0.0;
-	//     cz = 0.0;
-	//     glColor3f( 0.0, 0.0, 0.0 );//white
-	//     for(int i=0;i<=180;i++){
-	//     cx = 2000.0*sin(M_PI*(float)i/(float)180.0);
-	//     cy = 2000.0*cos(M_PI*(float)i/(float)180.0);
-	//     cz = -SENSOR_HEIGHT;
-	//     glVertex3f( cx, cy, cz );
-	//     }
-	//     glEnd();
-
-	//     //円周を線だけで表示(3000)
-	//     glBegin( GL_LINE_LOOP );
-	//     cx = 0.0;
-	//     cy = 0.0;
-	//     cz = 0.0;
-	//     glColor3f( 0.0, 0.0, 0.0 );//white
-	//     for(int i=0;i<=180;i++){
-	//     cx = 3000.0*sin(M_PI*(float)i/(float)180.0);
-	//     cy = 3000.0*cos(M_PI*(float)i/(float)180.0);
-	//     cz = -SENSOR_HEIGHT;
-	//     glVertex3f( cx, cy, cz );
-	//     }
-	//     glEnd();
-
-        //センサ
-        glPushMatrix();
-        glColor3d(0.0, 0.0, 0.0); //色の設定
-        glTranslated(0.0, 0.0, 0.0);//平行移動値の設定
-        glutSolidSphere(100.0, 20, 20);//引数：(半径, Z軸まわりの分割数, Z軸に沿った分割数)
-        glPopMatrix();
-
         glutSwapBuffers();
 	} //if(OBJECT.readNew)
-	sleepSSM(0.005);
+	sleepSSM(0.05);
 }
 
 void reshape(int w, int h)

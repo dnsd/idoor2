@@ -29,6 +29,6 @@ scandataR2:scandataR2.cpp
 LS3DViewer:LS3DViewer.cpp
 	g++ -o LS3DViewer LS3DViewer.cpp  -lglut -lGLU -lGL -lm -lssm
 objectR:objectR.cpp
-	gcc objectR.cpp  -lglut -lGLU -lGL -lm -lssm -o objectR
+	g++ -o objectR objectR.cpp  -lglut -lGLU -lGL -lm -lssm
 beam_comeR:beam_comeR.cpp
 	gcc beam_comeR.cpp  -lglut -lGLU -lGL -lm -lssm -o beam_comeR
