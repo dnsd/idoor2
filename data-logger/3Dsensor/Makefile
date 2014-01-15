@@ -16,6 +16,8 @@ histgram:histgram.cpp
 	g++ -g -o histgram histgram.cpp -lssm -lm
 back:back.cpp
 	g++ -g -o back back.cpp -lssm -lm
+filter:filter.cpp
+	g++ -o filter filter.cpp Step.cpp mystd.cpp -lssm -lm
 connect:connect.c
 	gcc -o connect connect.c -lssm -lm
 rp:rp.c

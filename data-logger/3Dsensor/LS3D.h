@@ -1,4 +1,5 @@
 #define STEP_NUM 2720
+#define FREQ 0.05
 
 typedef struct{
     char det; //UorD
