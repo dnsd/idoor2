@@ -463,7 +463,8 @@ bool Tanzaku::isCancel(Lane& lane, int tan_num)
     // 物体がエリア内にいないとき（条件1）
     if (isInDetectionArea(tan_num, CUR_INDEX) == false)
     {
-        cancel_flag[tan_num] = true;
+        //cancel_flag[tan_num] = true;
+        return true;
     }
     return false;
 }

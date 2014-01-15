@@ -6,7 +6,7 @@ const bool MODE_E = true;
 
 //センサスペック
 const int STEP_NUM = 2720;
-const double SENSOR_HEIGHT = 2540; //mm
+const double SENSOR_HEIGHT = 2600; //mm
 const double SENSOR_ANGLE = 37; //deg
 const double FREQ = 0.05; //単位は秒
 
@@ -40,14 +40,14 @@ const int TANZAKU_NUM_MAX = 30; //短冊の個数
 const int FRAME_OBSERVE_MIN = 4;
 
 //-ドア-//
-const double DOOR_V_NORMAL = 900.0; //単位はmm/sec、両開き
+const double DOOR_V_NORMAL = 1000.0; //単位はmm/sec、両開き
 const double DOOR_V_HIGH = 1800.0; //単位はmm/sec、両開き
-const double DOOR_W_HALF = 720.0; //単位はmm
-const double DOOR_W_FULL = 1080.0; //暫定
+const double DOOR_W_HALF = 800.0; //単位はmm
+const double DOOR_W_FULL = 1800.0; //暫定
 const int REQUIRED_FRAME_NORMAL_HALF = 16; //ゆっくりドアを開くときの所要フレーム数（半開き）
-const int REQUIRED_FRAME_NORMAL_FULL = 24;
-const int REQUIRED_FRAME_HIGH_HALF = 8; //素早くドアを開くときの所要フレーム数 （半開き）
-const int REQUIRED_FRAME_HIGH_FULL = 12;
+const int REQUIRED_FRAME_NORMAL_FULL = 36;
+const int REQUIRED_FRAME_HIGH_HALF = 14; //素早くドアを開くときの所要フレーム数 （半開き）
+const int REQUIRED_FRAME_HIGH_FULL = 34;
 const int MARGIN = 2; //何フレーム前までにドアが開いていてほしいか。
 
 const double DOOR_W_MIN = 200.0; //これ以下だったら開けない
@@ -58,10 +58,10 @@ const double LANE_W = 100.0;
 const int LANE_NUM_MAX = 23;
 
 // エリアEの定義
-const double AREA_E_START_Y = -1700.0;
-const double AREA_E_END_Y = 1700.0;
+const double AREA_E_START_Y = -1800.0;
+const double AREA_E_END_Y = 1800.0;
 const double AREA_E_START_X = 0.0;
-const double AREA_E_END_X = 2200.0;
+const double AREA_E_END_X = 2600.0;
 const int FRAME_OBSERVE = 5;
 const int PENDING_ZONE_WIDTH = 4;
 

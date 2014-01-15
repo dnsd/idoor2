@@ -9,7 +9,7 @@
 
 using namespace std;
 
-void judge_B(Step_data& data, int& stop_cnt, bool& B_flag)
+void judge_B(Step& data, int& stop_cnt, bool& B_flag)
 {
     int num_of_step_in_areaB = 0;
     for (int i = 0; i < STEP_NUM; i++)

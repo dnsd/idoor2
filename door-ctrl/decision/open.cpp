@@ -17,7 +17,7 @@
 using namespace std;
 
 // debug
-void judge_open_mode(Tanzaku_data& tan, Lane_data& lane, bool B_flag, int& open_mode)
+void judge_open_mode(Tanzaku& tan, Lane& lane, bool B_flag, int& open_mode)
 {
     //-初期化-//
     open_mode = 0;
