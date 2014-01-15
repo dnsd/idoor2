@@ -71,5 +71,14 @@ void sleep_const_freq(double cycle_start_time, double cycle_end_time, double fre
 {
     //-周期を合わせるために待機-//
     //freqの単位は「秒」
-    usleep(freq * 1000000 - (cycle_end_time - cycle_start_time) * 1000000);
+    if ((cycle_end_time - cycle_start_time) < freq)
+    {
+        cout << "wait = " << (cycle_end_time - cycle_start_time) << endl;
+        usleep(freq * 1000000 - (cycle_end_time - cycle_start_time) * 1000000);
+    }
 }
+
+
+
+
+
