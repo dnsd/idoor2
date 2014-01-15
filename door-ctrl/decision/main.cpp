@@ -59,7 +59,7 @@ int main (int argc, char **argv)
     OBJECT.open(SSM_READ);
 
     //-クラス-//
-    Tanzaku tan;
+    Tanzaku tanzaku;
     Cell cell;
     Step ped;
     Lane lane;
@@ -93,29 +93,29 @@ int main (int argc, char **argv)
 
             // 短冊を使った位置・速度データの計算
             allocate_data_to_tanzaku(tan_fac_a, tan_fac_b, steptime, ped, cell);
-            cal_pos_group_near(cell.step_num, cell.sum_x, cell.sum_y, cell.sum_steptime, tan.x, tan.y, tan.scan_time);
-            least_square(tan.scan_time, tan.x, tan.v);
+            cal_pos_group_near(cell.step_num, cell.sum_x, cell.sum_y, cell.sum_steptime, tanzaku.x, tanzaku.y, tanzaku.scan_time);
+            least_square(tanzaku.scan_time, tanzaku.x, tanzaku.v);
 
             // 短冊を使った開き判定
-            upd_tan_approach_cnt(tan.x, tan.approach_cnt);//upd_tan_approach_cntの設定
-            cal_frame_arrival(tan.x, tan.v, tan.frame_arrival);//歩行者がドアに到達するまでのフレーム数
-            cal_w(tan_wn, tan.x, tan.approach_cnt, tan.w, sum_w); //幅の算出（tan_xベース）
-            judge_open_mode_tan(tan.approach_cnt, tan.frame_arrival, sum_w, tan.open_mode);
+            upd_tan_approach_cnt(tanzaku.x, tanzaku.approach_cnt);//upd_tan_approach_cntの設定
+            cal_frame_arrival(tanzaku.x, tanzaku.v, tanzaku.frame_arrival);//歩行者がドアに到達するまでのフレーム数
+            cal_w(tan_wn, tanzaku.x, tanzaku.approach_cnt, tanzaku.w, sum_w); //幅の算出（tan_xベース）
+            judge_open_mode_tan(tanzaku.approach_cnt, tanzaku.frame_arrival, sum_w, tanzaku.open_mode);
 
             // レーンを使った素通りのキャンセル
-            lane.set_on_the_lane_flag(tan);
-            lane.set_entry_lane_flag(tan);
-            lane.set_pending_flag();
+            // lane.set_on_the_lane_flag(tanzaku);
+            // lane.set_entry_lane_flag(tanzaku);
+            // lane.set_pending_flag();
 
             // judge_B(ped, stop_cnt, B_flag);
             
             // 最終的な開き命令
-            judge_open_mode(tan, lane, B_flag, open_mode_door);
+            // judge_open_mode(tanzaku, lane, B_flag, open_mode_door);
 
             //-結果のファイル出力-//
             for(int i=0; i<TANZAKU_NUM_MAX; i++)
             {
-                // ofs << tan.v[i] << "," ;
+                // ofs << tanzaku.v[i] << "," ;
             }
 
             for (int i = 0; i < LANE_NUM_MAX; i++)
@@ -126,15 +126,20 @@ int main (int argc, char **argv)
             ofs << endl;
 
             // open_log出力
-            write_open_log(OBJECT.data.det, OBJECT.data.x, OBJECT.data.y, OBJECT.data.z, 
-                    open_mode_door, tan.open_mode, tan.x, tan.v, 
-                    tan.approach_cnt, SCAN_DATA.time);
+            // write_open_log(OBJECT.data.det, OBJECT.data.x, OBJECT.data.y, OBJECT.data.z, 
+            //          open_mode_door, tanzaku.open_mode, tanzaku.x, tanzaku.v, 
+            //          tanzaku.approach_cnt, SCAN_DATA.time);
 
             time_2 = get_time();
             usleep(FREQ*1000000 - (time_2 - time_1)*1000000);
             time_3 = get_time();
 
             //-結果の標準出力-//
+            for (int i = 0; i < TANZAKU_NUM_MAX; i++)
+            {
+                //cout << tanzaku.open_mode[i];
+            }
+            cout << endl;
             // cout << "time = " << time_3 - time_1 << endl;
             cout << "open_mode_door = " << open_mode_door << endl; //開き判定のコンソール出力
             // cout << SCAN_DATA.time << endl;

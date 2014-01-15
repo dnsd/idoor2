@@ -287,39 +287,6 @@ void clear_buf(vector< deque<double> >& G_data_buf)
     }
 }
 
-//スキャンの方向を考慮する方法（必ず同じ方向のものと比較する）
-void upd_tan_approach_cnt(vector< deque<double> >& G_data_buf, int tan_approach_cnt[])
-{
-    for (int i = 0; i < TANZAKU_NUM_MAX; i++)
-    {
-        if (G_data_buf[i][CUR_INDEX] != 0.0
-                && G_data_buf[i][PREPRE_INDEX] != 0.0)
-        {
-            if ( (G_data_buf[i][PREPRE_INDEX] - G_data_buf[i][CUR_INDEX]) > (2 * MIN_SPEED)) //最低スピード以上ならインクリメント。 //最大スピードについても考えたほうがよい？
-            {
-                if (G_data_buf[i][PRE_INDEX] != 0.0)
-                {
-                    tan_approach_cnt[i]++;
-                }
-                if (G_data_buf[i][PRE_INDEX] == 0.0) //PREが0のときは前回のぶんもインクリメント
-                {
-                    tan_approach_cnt[i]++;
-                    tan_approach_cnt[i]++;
-                }
-            }
-            if (G_data_buf[i][PREPRE_INDEX] - G_data_buf[i][CUR_INDEX] < (-2 * MIN_SPEED)) //遠ざかったときはクリア
-            {
-                tan_approach_cnt[i] = 0;
-            }
-        }
-        if (G_data_buf[i][CUR_INDEX] == 0.0
-                && G_data_buf[i][PRE_INDEX] == 0.0) //物体がないときはクリア
-        {
-            tan_approach_cnt[i] = 0;
-        }
-    }
-}
-
 //いっことばしの考慮あり
 void cal_frame_arrival(vector< deque<double> >& G_data_buf, vector< deque<double> >& v, int frame_arrival[])
 {
@@ -347,7 +314,7 @@ void cal_frame_arrival(vector< deque<double> >& G_data_buf, vector< deque<double
 void judge_open_mode_tan(int tan_approach_cnt[], int frame_arrival[], deque<double>& sum_w, int open_mode_tan[])
 {
     //-初期化-//
-    for (int i = 0; i < TANZAKU_NUM_MAX; ++i)
+    for (int i = 0; i < TANZAKU_NUM_MAX; i++)
     {
         open_mode_tan[i] = 0;
     }
@@ -394,6 +361,39 @@ void judge_open_mode_tan(int tan_approach_cnt[], int frame_arrival[], deque<doub
         } 
     }
     //open_mode_tanの判定と出力おわり//  
+}
+
+//スキャンの方向を考慮する方法（必ず同じ方向のものと比較する）
+void upd_tan_approach_cnt(vector< deque<double> >& G_data_buf, int tan_approach_cnt[])
+{
+    for (int i = 0; i < TANZAKU_NUM_MAX; i++)
+    {
+        if (G_data_buf[i][CUR_INDEX] != 0.0
+                && G_data_buf[i][PREPRE_INDEX] != 0.0)
+        {
+            if ( (G_data_buf[i][PREPRE_INDEX] - G_data_buf[i][CUR_INDEX]) > (2 * MIN_SPEED)) //最低スピード以上ならインクリメント。 //最大スピードについても考えたほうがよい？
+            {
+                if (G_data_buf[i][PRE_INDEX] != 0.0)
+                {
+                    tan_approach_cnt[i]++;
+                }
+                if (G_data_buf[i][PRE_INDEX] == 0.0) //PREが0のときは前回のぶんもインクリメント
+                {
+                    tan_approach_cnt[i]++;
+                    tan_approach_cnt[i]++;
+                }
+            }
+            if (G_data_buf[i][PREPRE_INDEX] - G_data_buf[i][CUR_INDEX] < (-2 * MIN_SPEED)) //遠ざかったときはクリア
+            {
+                tan_approach_cnt[i] = 0;
+            }
+        }
+        if (G_data_buf[i][CUR_INDEX] == 0.0
+                && G_data_buf[i][PRE_INDEX] == 0.0) //物体がないときはクリア
+        {
+            tan_approach_cnt[i] = 0;
+        }
+    }
 }
 
 bool Tanzaku::isInDetectionArea(int tan_num, int index)
