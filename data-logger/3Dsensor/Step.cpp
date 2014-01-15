@@ -26,7 +26,8 @@ void Step_buf::bufsort()
 bool Step_buf::isInTheArea(int step_num)
 {
     if (AREA_START_Y <= y[step_num][CUR_INDEX] && y[step_num][CUR_INDEX] <= AREA_END_Y
-            && AREA_START_X <= x[step_num][CUR_INDEX] && x[step_num][CUR_INDEX] <= AREA_END_X)
+            && AREA_START_X <= x[step_num][CUR_INDEX] && x[step_num][CUR_INDEX] <= AREA_END_X
+            && AREA_START_Z <= z[step_num][CUR_INDEX] && z[step_num][CUR_INDEX] <= AREA_END_Z)
     {
         return true;
     }else{

@@ -13,6 +13,7 @@ void get_background (Step_buf& raw_data, LS3D& background );
 bool initialize(Step_buf& raw_data_U, Step_buf& raw_data_D, LS3D& background_U, LS3D& background_D);
 bool judge_MovingObjects_exist(Step_buf& ped_data);
 bool judge_Objects_exist(Step_buf& ped_data);
+void apply_area_filter(Step_buf& ped_data);
 
 //-SSM-//
 SSMApi<LS3D> SCAN_DATA("LS3D", 0);
@@ -57,6 +58,8 @@ int main (int argc, char *argv[])
                 raw_data_U.set_data(SCAN_DATA.data.det, SCAN_DATA.data.dist, SCAN_DATA.data.x, SCAN_DATA.data.y, SCAN_DATA.data.z);
                 //-差分データの計算-//
                 cal_background_diff (raw_data_U, ped_data, background_U);
+                //-エリアフィルタの適用-//
+                apply_area_filter(ped_data);
                 //-差分データをSSM構造体にセット-//
                 OBJECT.data.det = ped_data.det[CUR_INDEX];
                 for (int i=0; i<STEP_NUM; i++)
@@ -73,6 +76,8 @@ int main (int argc, char *argv[])
                 raw_data_D.set_data(SCAN_DATA.data.det, SCAN_DATA.data.dist, SCAN_DATA.data.x, SCAN_DATA.data.y, SCAN_DATA.data.z);
                 //-差分データの計算-//
                 cal_background_diff (raw_data_D, ped_data, background_D);
+                //-エリアフィルタの適用-//
+                apply_area_filter(ped_data);
                 //-差分データをSSM構造体にセット-//
                 OBJECT.data.det = ped_data.det[CUR_INDEX];
                 for (int i=0; i<STEP_NUM; i++)
@@ -84,9 +89,9 @@ int main (int argc, char *argv[])
                 }
             }
 
-            //-物体が存在するかの判定-//
-            AREA.data.hasObjects = judge_Objects_exist(ped_data);
-            //-動物体が存在するかの判定-//
+            //-静止物体が存在するかの判定-//
+            // AREA.data.hasObjects = judge_Objects_exist(ped_data);
+            //-動体が存在するかの判定-//
             AREA.data.hasMovingObjects = judge_MovingObjects_exist(ped_data);
 
             if ( AREA.data.hasMovingObjects == true)
@@ -255,5 +260,19 @@ bool judge_Objects_exist(Step_buf& ped_data)
         return true;
     }else{
         return false;
+    }
+}
+
+void apply_area_filter(Step_buf& ped_data)
+{
+    for (int i = 0; i < STEP_NUM; i++)
+    {
+        if (ped_data.isInTheArea(i) == false)
+        {
+            ped_data.dist[i][CUR_INDEX] = 0.0;
+            ped_data.x[i][CUR_INDEX] = 0.0;
+            ped_data.y[i][CUR_INDEX] = 0.0;
+            ped_data.z[i][CUR_INDEX] = 0.0;
+        }
     }
 }
