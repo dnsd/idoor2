@@ -64,7 +64,7 @@ int main (int argc, char *argv[])
                     OBJECT.data.dist[i] = ped_data.dist[i][CUR_INDEX];
                     OBJECT.data.x[i] = ped_data.x[i][CUR_INDEX];
                     OBJECT.data.y[i] = ped_data.y[i][CUR_INDEX];
-                    OBJECT.data.z[i] = ped_data.y[i][CUR_INDEX];
+                    OBJECT.data.z[i] = ped_data.z[i][CUR_INDEX];
                 }
             }
             if (SCAN_DATA.data.det == 'D')
@@ -80,7 +80,7 @@ int main (int argc, char *argv[])
                     OBJECT.data.dist[i] = ped_data.dist[i][CUR_INDEX];
                     OBJECT.data.x[i] = ped_data.x[i][CUR_INDEX];
                     OBJECT.data.y[i] = ped_data.y[i][CUR_INDEX];
-                    OBJECT.data.z[i] = ped_data.y[i][CUR_INDEX];
+                    OBJECT.data.z[i] = ped_data.z[i][CUR_INDEX];
                 }
             }
 
