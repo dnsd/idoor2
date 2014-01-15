@@ -43,7 +43,7 @@ void idle(void);
 void initEnvironment(void);
 
 //-SSM-//
-SSMApi<LS3D> OBJECT("LS3D", 1);
+SSMApi<LS3D> OBJECT("OBJECT", 1);
 
 int main(int argc, char **argv)
 {
