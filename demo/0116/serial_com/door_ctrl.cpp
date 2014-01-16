@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     newtio.c_iflag = 0;
     newtio.c_oflag = 0;
 
-    // newtio.c_oflag &= ~ONLCR;
+    newtio.c_oflag &= ~ONLCR;
     
     // タイムアウト設定とread関数の設定
     newtio.c_cc[VTIME] = 0; // キャラクタ間タイマは未使用
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
     tcsetattr(fd, TCSANOW, &newtio);
 
     // ioctl(fd, TCSETS, &newtio);       /* ポートの設定を有効にする */
-    char buf;
+    const char* buf = "o";
 
     // データ送信ループ
     while(1)
@@ -83,9 +83,9 @@ int main(int argc, char *argv[])
 
                 write(fd, "o", 1);      /* デバイスへ255バイト書き込み */
             }
-            else if(DORDER.data.order == 6){ //低速半開
-
-                write(fd, "o", 1);      /* デバイスへ255バイト書き込み */
+            else if(DORDER.data.order == 0){ //低速半開
+                cout << "open" << endl;
+                write(fd, buf, 1);      /* デバイスへ255バイト書き込み */
             }
         }
             usleep(1000);

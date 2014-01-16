@@ -110,7 +110,7 @@ int main (int argc, char **argv)
     //-ファイル読み込みおわり-//
 
     //-初期設定-//
-    initialize_open_log();
+    // initialize_open_log();
 
     //ステップタイムの設定
     for (int i = 1; i <= STEP_NUM; i++)
@@ -218,11 +218,11 @@ int main (int argc, char **argv)
             upd_cancel_lane_flag(tanzaku.x, entry_lane_num, cancel_lane_flag);
             upd_cancel_flag(tanzaku.x, in_the_areaE_flag, cancel_lane_flag, cancel_flag);
 
-            judge_B(object, stop_cnt, B_flag);
+            // judge_B(object, stop_cnt, B_flag);
 
             judge_open_mode(tanzaku.open_mode, cancel_flag, B_flag, open_mode_door);
-            DORDER.data.order = open_mode_door;
-            DORDER.write();
+            //DORDER.data.order = open_mode_door;
+            //DORDER.write();
 
             //-各種判定-//
 
@@ -246,23 +246,10 @@ int main (int argc, char **argv)
                 // ofs << entry_lane_num[i] << ",";
             }
 
-            for (int i = 0; i < TANZAKU_NUM_MAX; i++)
-            {
-                ofs << tanzaku.v[i][CUR_INDEX] << ",";
-            }
-
-            for (int i = 0; i < LANE_NUM_MAX; i++)
-            {
-                // ofs << cancel_lane_flag[i] << ",";
-                // ofs << on_the_lane_flag[i] << ",";
-            }
-
-            ofs << endl;
-
             // open_log出力
-            write_open_log(OBJECT.data.det, OBJECT.data.x, OBJECT.data.y, OBJECT.data.z, 
-                            open_mode_door, tanzaku.open_mode, tanzaku.x, tanzaku.v, 
-                            tanzaku.approach_cnt, SCAN_DATA.time);
+            // write_open_log(OBJECT.data.det, OBJECT.data.x, OBJECT.data.y, OBJECT.data.z, 
+            //                 open_mode_door, tanzaku.open_mode, tanzaku.x, tanzaku.v, 
+            //                 tanzaku.approach_cnt, SCAN_DATA.time);
 
 	        time_2 = get_time();
             usleep(FREQ*1000000 - (time_2 - time_1)*1000000);

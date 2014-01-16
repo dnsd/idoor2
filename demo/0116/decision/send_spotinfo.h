@@ -18,7 +18,7 @@ typedef struct{
 }LS3D;
 
 typedef struct{
-    char order;
+    int order;
 }ORDER;
 
 class tanzaku_data
