@@ -65,27 +65,26 @@ int main(int argc, char *argv[])
 
             if(DORDER.data.order == 1){  //高速全開
 
-                write(fd, "o", 1);      /* デバイスへ255バイト書き込み */
+                write(fd, buf, 1);      /* デバイスへ255バイト書き込み */
             }
             else if(DORDER.data.order == 2){ //高速半開
 
-                write(fd, "o", 1);      /* デバイスへ255バイト書き込み */
+                write(fd, buf, 1);      /* デバイスへ255バイト書き込み */
             }
             else if(DORDER.data.order == 3){ //標準全開
 
-                write(fd, "o", 1);      /* デバイスへ255バイト書き込み */
+                write(fd, buf, 1);      /* デバイスへ255バイト書き込み */
             }
             else if(DORDER.data.order == 4){ //標準半開
 
-                write(fd, "o", 1);      /* デバイスへ255バイト書き込み */
+                write(fd, buf, 1);      /* デバイスへ255バイト書き込み */
             }
             else if(DORDER.data.order == 5){ //低速全開
 
-                write(fd, "o", 1);      /* デバイスへ255バイト書き込み */
+                write(fd, buf, 1);      /* デバイスへ255バイト書き込み */
             }
             else if(DORDER.data.order == 0){ //低速半開
-                cout << "open" << endl;
-                write(fd, buf, 1);      /* デバイスへ255バイト書き込み */
+                // write(fd, buf, 1);      /* デバイスへ255バイト書き込み */
             }
         }
             usleep(1000);
