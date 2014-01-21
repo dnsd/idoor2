@@ -28,7 +28,8 @@ bool Area::hasObjects(Step& rd) // "r"ead"d"ata
 	int step_num_cnt = 0;
 	for (int i = 0; i < STEP_NUM; i++)
 	{
-		if (sx1 <= rd.x[i][CUR_INDEX] && rd.x[i][CUR_INDEX] <= sx2
+		if (rd.dist[i][CUR_INDEX] != 0.0
+                        && sx1 <= rd.x[i][CUR_INDEX] && rd.x[i][CUR_INDEX] <= sx2
 			&& sy1 <= rd.y[i][CUR_INDEX] && rd.y[i][CUR_INDEX] <= sy2
 			&& sz1 <= rd.z[i][CUR_INDEX] && rd.z[i][CUR_INDEX] <= sz2)
 		{
@@ -46,30 +47,32 @@ bool Area::hasObjects(Step& rd) // "r"ead"d"ata
 
 int Area::judgeOpen(Step& rd)
 {
-	if(hasObjects(rd) == true)
-	{
-		hasObjects_buf.pop_front();
-		hasObjects_buf.push_back(1);
-	}else{
-		hasObjects_buf.pop_front();
-		hasObjects_buf.push_back(0);
-	}
+    if(hasObjects(rd) == true)
+    {
+        hasObjects_buf.pop_front();
+        hasObjects_buf.push_back(1);
+    }else{
+        hasObjects_buf.pop_front();
+        hasObjects_buf.push_back(0);
+    }
 
-	int buf_num_cnt = 0;
-	for (int i = 0; i < hasObjects_buf.size(); i++)
-	{
-		if (hasObjects_buf[i] == 1)
-		{
-			buf_num_cnt++;
-		}
-	}
+    int buf_num_cnt = 0;
+    for (int i = 0; i < hasObjects_buf.size(); i++)
+    {
+        if (hasObjects_buf[i] == 1)
+        {
+            buf_num_cnt++;
+        }
+    }
 
-	if (buf_num_cnt >= buf_num_cnt_th)
-	{
-		return 4; // 高速全開
-	}else{
-		return 0; // 開けない
-	}
+    if (buf_num_cnt >= buf_num_cnt_th)
+    {
+        cout << "buf_num_cnt =" << buf_num_cnt << endl;
+        return 4; // 高速全開
+    }else{
+        cout << "buf_num_cnt =" << buf_num_cnt << endl;
+        return 0; // 開けない
+    }
 }
 
 void Area::set_step_num_cnt_th(int parameter)

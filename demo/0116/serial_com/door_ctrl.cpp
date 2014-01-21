@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
     while(1)
     {
         if (DORDER.readNew()){//if(OBJECTreadNew)
-            cout << DORDER.data.order <<endl;
+            // cout << DORDER.data.order <<endl;
 
             if(DORDER.data.order == 1){  //高速全開
 

@@ -25,7 +25,6 @@ bool B_flag = false;
 int stop_cnt = 0;
 
 //-開閉判定用-//
-int open_mode_door;
 
 //-時間計測用-//
 double time_1; //時間計測用
@@ -85,13 +84,7 @@ int main (int argc, char **argv)
             time_3 = get_time();
 
             //-結果の標準出力-//
-            for (int i = 0; i < TANZAKU_NUM_MAX; i++)
-            {
-                //cout << tanzaku.open_mode[i];
-            }
-            cout << endl;
-            // cout << "time = " << time_3 - time_1 << endl;
-            cout << "open_mode_door = " << open_mode_door << endl; //開き判定のコンソール出力
+            cout << "open_mode_door = " << DORDER.data.order << endl; //開き判定のコンソール出力
             // cout << SCAN_DATA.time << endl;
             // cout << endl;
         }else{  //if(OBJECTreadNew)
