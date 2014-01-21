@@ -103,14 +103,14 @@ int main (int argc, char **argv)
             judge_open_mode_tan(tanzaku.approach_cnt, tanzaku.frame_arrival, sum_w, tanzaku.open_mode);
 
             // レーンを使った素通りのキャンセル
-            // lane.set_on_the_lane_flag(tanzaku);
-            // lane.set_entry_lane_flag(tanzaku);
-            // lane.set_pending_flag();
+            lane.set_on_the_lane_flag(tanzaku);
+            lane.set_entry_lane_flag(tanzaku);
+            lane.set_pending_flag();
 
             // judge_B(ped, stop_cnt, B_flag);
             
             // 最終的な開き命令
-            // judge_open_mode(tanzaku, lane, B_flag, open_mode_door);
+            judge_open_mode(tanzaku, lane, B_flag, open_mode_door);
 
             //-結果のファイル出力-//
             for(int i=0; i<TANZAKU_NUM_MAX; i++)
@@ -123,7 +123,7 @@ int main (int argc, char **argv)
                 // ofs << cancel_lane_flag[i] << ",";
             }
 
-            ofs << endl;
+            // ofs << endl;
 
             // open_log出力
             // write_open_log(OBJECT.data.det, OBJECT.data.x, OBJECT.data.y, OBJECT.data.z, 
@@ -137,9 +137,11 @@ int main (int argc, char **argv)
             //-結果の標準出力-//
             for (int i = 0; i < TANZAKU_NUM_MAX; i++)
             {
-                //cout << tanzaku.open_mode[i];
+                // cout << tanzaku.v[i][CUR_INDEX];
+                // cout << tanzaku.frame_arrival[i] << ",";
+                // cout << tanzaku.open_mode[i] << ",";
             }
-            cout << endl;
+            // cout << endl;
             // cout << "time = " << time_3 - time_1 << endl;
             cout << "open_mode_door = " << open_mode_door << endl; //開き判定のコンソール出力
             // cout << SCAN_DATA.time << endl;
