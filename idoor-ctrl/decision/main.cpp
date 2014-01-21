@@ -50,6 +50,7 @@ double time_3; //時間計測用
 //-SSM-//
 SSMApi<LS3D> SCAN_DATA("LS3D", 0);
 SSMApi<LS3D> OBJECT("OBJECT", 1);
+SSMApi<ORDER> DORDER("ORDER", 30);
 
 int main (int argc, char **argv)
 {
@@ -57,6 +58,7 @@ int main (int argc, char **argv)
     initSSM();
     SCAN_DATA.open(SSM_READ);
     OBJECT.open(SSM_READ);
+    DORDER.create(5.0, 1.0);
 
     //-クラス-//
     Tanzaku tanzaku;
@@ -111,6 +113,10 @@ int main (int argc, char **argv)
             
             // 最終的な開き命令
             judge_open_mode(tanzaku, lane, B_flag, open_mode_door);
+            DORDER.data.order = open_mode_door;
+
+            // SSM書き込み
+            DORDER.write();
 
             //-結果のファイル出力-//
             for(int i=0; i<TANZAKU_NUM_MAX; i++)

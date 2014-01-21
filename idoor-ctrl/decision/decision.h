@@ -63,6 +63,10 @@ class Cell
         double sum_steptime[TAN_CELL_NUM_MAX][TANZAKU_NUM_MAX]; //セル内にあるステップのスキャン時刻の総和
 };
 
+typedef struct{
+    int order;
+}ORDER;
+
 class Step
 {
     public:
