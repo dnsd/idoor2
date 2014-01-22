@@ -31,7 +31,7 @@ typedef struct{
 }ANGLE;
 
 double angle_convert(long angle);
-void calc_xyz(double angle_x, double angle_y, double dist, double *x, double *y, double *z);
+void calc_xyz(double angle_x, double angle_y, double dist, double& x, double& y, double& z);
 void clear_scandata(LS3D& scandata);
 void read_angle_data(ANGLE& angle);
 
@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
             {
                 for(int j=0; j<136; j++)
                 {
-                    calc_xyz(angle.U_x[i][j], angle.U_y[i][j], SCAN_DATA.data.dist[i*136 + j], &SCAN_DATA.data.x[i*136 + j], &SCAN_DATA.data.y[i*136 + j], &SCAN_DATA.data.z[i * 136 + j]);
+                    calc_xyz(angle.U_x[i][j], angle.U_y[i][j], SCAN_DATA.data.dist[i*136 + j], SCAN_DATA.data.x[i*136 + j], SCAN_DATA.data.y[i*136 + j], SCAN_DATA.data.z[i * 136 + j]);
                 }
             }
         }else if(SCAN_DATA.data.det == 'D'){
@@ -168,7 +168,7 @@ int main(int argc, char *argv[])
             {
                 for(int j=0; j<136; j++)
                 {
-                    calc_xyz(angle.D_x[i][j], angle.D_y[i][j], SCAN_DATA.data.dist[i*136 + j], &SCAN_DATA.data.x[i*136 + j], &SCAN_DATA.data.y[i*136 + j], &SCAN_DATA.data.z[i * 136 + j]);
+                    calc_xyz(angle.D_x[i][j], angle.D_y[i][j], SCAN_DATA.data.dist[i*136 + j], SCAN_DATA.data.x[i*136 + j], SCAN_DATA.data.y[i*136 + j], SCAN_DATA.data.z[i * 136 + j]);
                 }
             }
         }
@@ -191,15 +191,15 @@ double angle_convert(long angle)
     return alpha;
 }
 
-void calc_xyz(double angle_x, double angle_y, double dist, double *x, double *y, double *z)
+void calc_xyz(double angle_x, double angle_y, double dist, double& x, double& y, double& z)
 {
     double tx, ty, tz;
     tx = dist * cos(angle_x) * cos(angle_y);
     ty = dist * sin(angle_x) * cos(angle_y);
     tz = dist * sin(angle_y);
-    *x = tz * sin(ALPHA) + tx * cos(ALPHA) + ORG_X;
-    *y = ty + ORG_Y;
-    *z = tz * cos(ALPHA) - tx * sin(ALPHA) + ORG_Z;
+    x = tz * sin(ALPHA) + tx * cos(ALPHA) + ORG_X;
+    y = ty + ORG_Y;
+    z = tz * cos(ALPHA) - tx * sin(ALPHA) + ORG_Z;
 }
 
 // void clear_scandata(LS3D& scandata)
