@@ -1,19 +1,5 @@
-door_open_x:door_open_x.cpp
-	g++ -o door_open_x door_open_x.cpp -lssm -lm
 background:background.cpp
 	g++ -o background background.cpp -lssm -lm
-area1:area1.cpp
-	g++ -o area1 area1.cpp -lssm -lm
-virtual_door:virtual_door.cpp
-	g++ -o virtual_door virtual_door.cpp -lglut -lGLU -lGL -lssm
-3Dsimu_test:3Dsimu_test.cpp
-	g++ -o 3Dsimu_test 3Dsimu_test.cpp -lglut -lGLU -lGL -lssm
-3DsimuR_test:3DsimuR_test.cpp
-	g++ -o 3DsimuR_test 3DsimuR_test.cpp -lglut -lGLU -lGL -lssm
-grid:grid.cpp
-	g++ -o grid grid.cpp -lssm -lm
-histgram:histgram.cpp
-	g++ -g -o histgram histgram.cpp -lssm -lm
 back:back.cpp
 	g++ -g -o back back.cpp -lssm -lm
 filter:filter.cpp
@@ -24,11 +10,11 @@ rp:rp.c
 	gcc -o rp rp.c -lssm -lm
 connect2:connect2.cpp
 	g++ -o connect2 connect2.cpp -lssm -lm
+connect_new:connect_new.cpp
+	g++ -o connect_new connect_new.cpp -lssm -lm
 scandataR2:scandataR2.cpp
 	gcc scandataR2.cpp  -lglut -lGLU -lGL -lm -lssm -o scandataR2
 LS3DViewer:LS3DViewer.cpp
 	g++ -o LS3DViewer LS3DViewer.cpp  -lglut -lGLU -lGL -lm -lssm
 objectR:objectR.cpp
 	g++ -o objectR objectR.cpp  -lglut -lGLU -lGL -lm -lssm
-beam_comeR:beam_comeR.cpp
-	gcc beam_comeR.cpp  -lglut -lGLU -lGL -lm -lssm -o beam_comeR
