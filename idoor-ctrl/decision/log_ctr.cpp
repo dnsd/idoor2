@@ -85,6 +85,7 @@ void write_open_log(char data_det, double data_x[], double data_y[], double data
     }
     olog << endl;
 
+    //-結果の行の読み込み-//
     //開閉判定情報の書き込み（統合）(3)
     olog << open_mode << ",";
 
@@ -94,26 +95,26 @@ void write_open_log(char data_det, double data_x[], double data_y[], double data
         olog << open_mode_tan[tan_num] << ",";
     }
 
-    //短冊ごとのtan_x_buf
+    //短冊ごとのtan_x_buf(5)
     for (int tan_num = 0; tan_num < TANZAKU_NUM_MAX; tan_num++)
     {
         olog << tan_x_buf[tan_num][CUR_INDEX] << ",";
     }
 
-    //短冊ごとのG_v_cur
+    //短冊ごとのG_v_cur(6)
     for (int tan_num = 0; tan_num < TANZAKU_NUM_MAX; tan_num++)
     {
         olog << v[tan_num][CUR_INDEX] << ",";
     }
 
-    //短冊ごとのapproach_cnt
+    //短冊ごとのapproach_cnt(7)
     for (int tan_num = 0; tan_num < TANZAKU_NUM_MAX; tan_num++)
     {
         olog << tan_approach_cnt[tan_num] << ",";
     }
 
-    //スキャン時刻
-    olog << scantime << ",";
+    // //スキャン時刻
+    // olog << scantime << ",";
 
     //書き込み終了
     olog << endl;

@@ -132,9 +132,9 @@ int main (int argc, char **argv)
             // ofs << endl;
 
             // open_log出力
-            // write_open_log(OBJECT.data.det, OBJECT.data.x, OBJECT.data.y, OBJECT.data.z, 
-            //          open_mode_door, tanzaku.open_mode, tanzaku.x, tanzaku.v, 
-            //          tanzaku.approach_cnt, SCAN_DATA.time);
+            write_open_log(OBJECT.data.det, OBJECT.data.x, OBJECT.data.y, OBJECT.data.z, 
+                     open_mode_door, tanzaku.open_mode, tanzaku.x, tanzaku.v, 
+                     tanzaku.approach_cnt, SCAN_DATA.time);
 
             time_2 = get_time();
             usleep(FREQ*1000000 - (time_2 - time_1)*1000000);
