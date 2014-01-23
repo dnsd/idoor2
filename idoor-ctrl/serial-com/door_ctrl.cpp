@@ -32,7 +32,7 @@ main()
 
     // ssmのイニシャライズ
     initSSM();
-    DORDER.create(5.0, 1.0);
+    DORDER.open(SSM_READ);
 
     fd = open(MODEMDEVICE, O_WRONLY | O_NOCTTY ); 
     if (fd <0) {perror(MODEMDEVICE); exit(-1); }

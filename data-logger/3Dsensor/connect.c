@@ -18,11 +18,11 @@
 #define BUFFER_SIZE 23599
 #define freq 0.05
 
-#define ORG_X 600.0
+#define ORG_X 250.0
 #define ORG_Y 0.0
-#define ORG_Z 2600.0
+#define ORG_Z 2520.0
 // #define ALPHA (1.0 / 2.0 * M_PI) - 1.0 / 9.0 * M_PI //取り付け角(5Hz)
-#define ALPHA 70.0 / 180.0 * M_PI //取り付け角(10Hz)
+#define ALPHA 61.0 / 180.0 * M_PI //取り付け角(10Hz)
 
 int main ()
 {

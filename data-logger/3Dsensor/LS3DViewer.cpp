@@ -11,9 +11,9 @@
 
 #define pointsize 2
 
-#define SENSOR_POS_X 600.0
+#define SENSOR_POS_X 250.0
 #define SENSOR_POS_Y 0.0
-#define SENSOR_POS_Z 2600.0
+#define SENSOR_POS_Z 2520.0
 #define STEP_NUM_MAX 2720
 
 using namespace std;
