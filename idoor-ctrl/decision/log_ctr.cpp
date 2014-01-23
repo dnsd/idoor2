@@ -27,30 +27,58 @@ void initialize_open_log()
     olog.close();
 }
 
-void read_tan_fac(double tan_fac_a[], double tan_fac_b[], double tan_fac_p0x[], double tan_fac_p0y[])
+// void read_tan_fac(double tan_fac_a[], double tan_fac_b[], double tan_fac_p0x[], double tan_fac_p0y[])
+// {
+//     FILE *fp;
+//     //tan_facの読み込み //y=ax+bで考える
+//     fp = fopen("tanzaku_fac","r");
+//     for(int i=0; i<BORDER_NUM_MAX; i++)
+//     {
+//         fscanf(fp, "%lf", &tan_fac_a[i]);
+//         fscanf(fp, "%lf", &tan_fac_b[i]);
+
+//         tan_fac_p0x[i] = 0.0;
+//         tan_fac_p0y[i] = 0.0;
+//     }
+//     fclose(fp);
+// }
+
+void read_tan_fac(TANZAKU_FAC& fac)
 {
     FILE *fp;
     //tan_facの読み込み //y=ax+bで考える
     fp = fopen("tanzaku_fac","r");
     for(int i=0; i<BORDER_NUM_MAX; i++)
     {
-        fscanf(fp, "%lf", &tan_fac_a[i]);
-        fscanf(fp, "%lf", &tan_fac_b[i]);
+        fscanf(fp, "%lf", &fac.a[i]);
+        fscanf(fp, "%lf", &fac.b[i]);
 
-        tan_fac_p0x[i] = 0.0;
-        tan_fac_p0y[i] = 0.0;
+        fac.p0x[i] = 0.0;
+        fac.p0y[i] = 0.0;
     }
     fclose(fp);
 }
 
-void read_tan_wn(double tan_wn[])
+// void read_tan_wn(double tan_wn[])
+// {
+//     FILE *fp;
+//     //wnの読み込み（tan_xベース）
+//     fp = fopen("wn","r");
+//     for(int i=0; i<TANZAKU_NUM_MAX; i++)
+//     {
+//         fscanf(fp, "%lf", &tan_wn[i]);
+//     }
+//     fclose(fp);
+// }
+
+void read_tan_wn(TANZAKU_FAC& fac)
 {
     FILE *fp;
     //wnの読み込み（tan_xベース）
     fp = fopen("wn","r");
     for(int i=0; i<TANZAKU_NUM_MAX; i++)
     {
-        fscanf(fp, "%lf", &tan_wn[i]);
+        fscanf(fp, "%lf", &fac.wn[i]);
     }
     fclose(fp);
 }

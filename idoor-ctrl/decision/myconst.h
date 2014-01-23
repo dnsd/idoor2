@@ -48,11 +48,11 @@ const double DOOR_W_TH = 800.0; //一人or複数人の判定用
 const double LANE_W = 100.0;
 const int LANE_NUM_MAX = 26;
 
-// エリアEの定義
+// エリアの定義
 const double AREA_E_START_Y = -1600.0;
 const double AREA_E_END_Y = 1000.0;
 const double AREA_E_START_X = 0.0;
-const double AREA_E_END_X = 2600.0;
+const double AREA_E_END_X = 2400.0;
 const int FRAME_OBSERVE = 5;
 const int PENDING_ZONE_WIDTH = 4; // 片側
 
