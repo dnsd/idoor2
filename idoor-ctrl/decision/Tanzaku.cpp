@@ -69,6 +69,31 @@ void allocate_data_to_tanzaku(double tan_fac_a[], double tan_fac_b[], double ste
     } //ステップのループおわり
 }
 
+
+
+//いっことばしの考慮あり
+void cal_frame_arrival(vector< deque<double> >& G_data_buf, vector< deque<double> >& v, int frame_arrival[])
+{
+    double arrival_temp[TANZAKU_NUM_MAX];
+    for (int tan_num = 0; tan_num < TANZAKU_NUM_MAX; tan_num++)
+    {
+        if (G_data_buf[tan_num][CUR_INDEX] != 0.0
+                && v[tan_num][CUR_INDEX] > 0.0)
+        {
+            arrival_temp[tan_num] = G_data_buf[tan_num][CUR_INDEX] / v[tan_num][CUR_INDEX];
+            frame_arrival[tan_num] = arrival_temp[tan_num] / FREQ;
+        }else if (G_data_buf[tan_num][CUR_INDEX] == 0.0
+                && G_data_buf[tan_num][PRE_INDEX] != 0.0
+                && v[tan_num][CUR_INDEX] > 0.0) 
+        {
+            arrival_temp[tan_num] = G_data_buf[tan_num][PRE_INDEX] / v[tan_num][CUR_INDEX];
+            frame_arrival[tan_num] = arrival_temp[tan_num] / FREQ;
+        }else{
+            frame_arrival[tan_num] = 100;
+        }
+    }
+}
+
 // グループ全体の重心を位置データとする
 void cal_pos_group_near(int step_num_in_cell[][TANZAKU_NUM_MAX], double sum_x_in_cell[][TANZAKU_NUM_MAX], double sum_y_in_cell[][TANZAKU_NUM_MAX], double sum_steptime_in_cell[][TANZAKU_NUM_MAX],
         vector< deque<double> >& tan_x_buf, vector< deque<double> >& tan_y_buf, vector< deque<double> >& tan_scantime_buf)
@@ -137,74 +162,6 @@ void cal_pos_group_near(int step_num_in_cell[][TANZAKU_NUM_MAX], double sum_x_in
         tan_x_buf[i].push_back(tan_x_group_near[i]);
         tan_y_buf[i].push_back(tan_y_group_near[i]);
         tan_scantime_buf[i].push_back(tan_scantime_group_near[i]);
-    }
-}
-
-void least_square(vector< deque<double> >& G_time_buf, vector< deque<double> >& G_data_buf, vector< deque<double> >& v)
-{
-    double x[TANZAKU_NUM_MAX][BUFFER_LENGTH];
-    double y[TANZAKU_NUM_MAX][BUFFER_LENGTH];
-
-    //-xのわりあて-//
-    for (int i = 0; i < TANZAKU_NUM_MAX; i++)
-    {
-        for (int j = 0; j < BUFFER_LENGTH; j++)
-        {
-            x[i][j] = FREQ * j + G_time_buf[i][j];
-        }
-    }
-
-    //-yのわりあて-//
-    for(int i=0; i<TANZAKU_NUM_MAX; i++)
-    {
-        for(int j=0; j<BUFFER_LENGTH; j++)
-        {
-            y[i][j] = G_data_buf[i][j];
-        }
-    }
-
-    //-最小二乗法-// 
-    for (int i = 0; i < TANZAKU_NUM_MAX; i++)
-    {
-        int data_num_cnt = 0;
-        double sum_x = 0.0;
-        double sum_y = 0.0;
-        double sum_xy = 0.0;
-        double sum_xx = 0.0;
-        for (int j = 0; j <BUFFER_LENGTH; j++) //すべてのバッファを計算に使う
-        {
-            if (y[i][j] != 0.0)
-            {
-                sum_x += x[i][j];
-                sum_y += y[i][j];
-                sum_xx += x[i][j] * x[i][j];
-                sum_xy += x[i][j] * y[i][j];
-                data_num_cnt++;
-            }
-        }
-
-        if (data_num_cnt >= 2 && (y[i][CUR_INDEX] != 0.0 || y[i][PRE_INDEX] != 0.0))
-        {
-            // 速度temp_vの算出
-            double temp_v = 0.0;
-            temp_v = (data_num_cnt * sum_xy - sum_x * sum_y) / (data_num_cnt * sum_xx - pow(sum_x, 2));
-            // 速度方向を反転する
-            // v[i] = temp_v * -1;
-            // 算出された速度の評価：値が大きすぎる場合は無効にする。 
-            if (fabs(temp_v) > V_MAX_TH)
-            {
-                v[i].pop_front();
-                v[i].push_back(0.0);
-            }else{
-                // 速度方向を反転する
-                v[i].pop_front();
-                v[i].push_back(temp_v * -1);
-            }
-        }else{
-            v[i].pop_front();
-            v[i].push_back(0.0);
-        }
-
     }
 }
 
@@ -287,26 +244,71 @@ void clear_buf(vector< deque<double> >& G_data_buf)
     }
 }
 
-//いっことばしの考慮あり
-void cal_frame_arrival(vector< deque<double> >& G_data_buf, vector< deque<double> >& v, int frame_arrival[])
+void least_square(vector< deque<double> >& G_time_buf, vector< deque<double> >& G_data_buf, vector< deque<double> >& v)
 {
-    double arrival_temp[TANZAKU_NUM_MAX];
-    for (int tan_num = 0; tan_num < TANZAKU_NUM_MAX; tan_num++)
+    double x[TANZAKU_NUM_MAX][BUFFER_LENGTH];
+    double y[TANZAKU_NUM_MAX][BUFFER_LENGTH];
+
+    //-xのわりあて-//
+    for (int i = 0; i < TANZAKU_NUM_MAX; i++)
     {
-        if (G_data_buf[tan_num][CUR_INDEX] != 0.0
-                && v[tan_num][CUR_INDEX] > 0.0)
+        for (int j = 0; j < BUFFER_LENGTH; j++)
         {
-            arrival_temp[tan_num] = G_data_buf[tan_num][CUR_INDEX] / v[tan_num][CUR_INDEX];
-            frame_arrival[tan_num] = arrival_temp[tan_num] / FREQ;
-        }else if (G_data_buf[tan_num][CUR_INDEX] == 0.0
-                && G_data_buf[tan_num][PRE_INDEX] != 0.0
-                && v[tan_num][CUR_INDEX] > 0.0) 
-        {
-            arrival_temp[tan_num] = G_data_buf[tan_num][PRE_INDEX] / v[tan_num][CUR_INDEX];
-            frame_arrival[tan_num] = arrival_temp[tan_num] / FREQ;
-        }else{
-            frame_arrival[tan_num] = 100;
+            x[i][j] = FREQ * j + G_time_buf[i][j];
         }
+    }
+
+    //-yのわりあて-//
+    for(int i=0; i<TANZAKU_NUM_MAX; i++)
+    {
+        for(int j=0; j<BUFFER_LENGTH; j++)
+        {
+            y[i][j] = G_data_buf[i][j];
+        }
+    }
+
+    //-最小二乗法-// 
+    for (int i = 0; i < TANZAKU_NUM_MAX; i++)
+    {
+        int data_num_cnt = 0;
+        double sum_x = 0.0;
+        double sum_y = 0.0;
+        double sum_xy = 0.0;
+        double sum_xx = 0.0;
+        for (int j = 0; j <BUFFER_LENGTH; j++) //すべてのバッファを計算に使う
+        {
+            if (y[i][j] != 0.0)
+            {
+                sum_x += x[i][j];
+                sum_y += y[i][j];
+                sum_xx += x[i][j] * x[i][j];
+                sum_xy += x[i][j] * y[i][j];
+                data_num_cnt++;
+            }
+        }
+
+        if (data_num_cnt >= 2 && (y[i][CUR_INDEX] != 0.0 || y[i][PRE_INDEX] != 0.0))
+        {
+            // 速度temp_vの算出
+            double temp_v = 0.0;
+            temp_v = (data_num_cnt * sum_xy - sum_x * sum_y) / (data_num_cnt * sum_xx - pow(sum_x, 2));
+            // 速度方向を反転する
+            // v[i] = temp_v * -1;
+            // 算出された速度の評価：値が大きすぎる場合は無効にする。 
+            if (fabs(temp_v) > V_MAX_TH)
+            {
+                v[i].pop_front();
+                v[i].push_back(0.0);
+            }else{
+                // 速度方向を反転する
+                v[i].pop_front();
+                v[i].push_back(temp_v * -1);
+            }
+        }else{
+            v[i].pop_front();
+            v[i].push_back(0.0);
+        }
+
     }
 }
 

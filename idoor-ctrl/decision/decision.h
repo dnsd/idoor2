@@ -123,8 +123,6 @@ class Lane
 //-関数のプロトタイプ宣言-//
 //mystd.cpp
 double get_time(void);
-//B.cpp
-void judge_B(Step& data, int& stop_cnt, bool& B_flag);
 //E.cpp
 void upd_tan_approach_cnt(vector< deque<double> >& G_data_buf, int tan_approach_cnt[]);
 void cal_frame_arrival(vector< deque<double> >& G_data_buf, vector< deque<double> >& v, int frame_arrival[]);
@@ -146,11 +144,7 @@ void judge_open_mode(Tanzaku& tan, Lane& lane, bool B_flag, int& open_mode);
 
 //-グローバル変数-//
 //ACF判定用
-extern double step_dist_dif[STEP_NUM];
-
-//B判定用//
-extern bool B_flag;
-extern int stop_cnt;
+// extern double step_dist_dif[STEP_NUM];
 
 //ファイル読み込み用
 extern double a[BORDER_NUM_MAX];
@@ -164,7 +158,7 @@ extern double tan_wn[TANZAKU_NUM_MAX]; //位置データが1mのときの短冊�
 extern double w1[TANZAKU_NUM_MAX];
 extern double tan_w[TANZAKU_NUM_MAX]; //短冊の幅
 
-extern double X_MAX; //センサの観測領域の限界（x軸）//frame_observeが変数のとき
+// extern double X_MAX; //センサの観測領域の限界（x軸）//frame_observeが変数のとき
 
 //-タイムゾーン設定用-//
 extern double steptime[STEP_NUM];

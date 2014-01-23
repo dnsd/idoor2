@@ -1,9 +1,4 @@
 // タイミング実験用
-
-//モード設定（デバッグ用）
-const bool MODE_B = false;
-const bool MODE_E = true;
-
 //センサスペック
 const int STEP_NUM = 2720;
 const double SENSOR_HEIGHT = 2600; //mm
@@ -13,10 +8,6 @@ const double FREQ = 0.05; //単位は秒
 // ステップの分類
 const double CLOSE_TH = 15.0; //10Hz //CLOSE_TH以上近づくものをbeam_closeとする。
 const double STOP_TH = 100.0; // 10Hz //単位はmm
-
-//人間
-const double Ha = 1200.0; //これ以上高いものを大人とする
-const double Hw = 300.0; //これより低いものを台車（ワゴン）とする //ワゴンと幅の「w」がかぶってる
 
 //tan
 const int TAN_CELL_NUM_MAX = 30;
@@ -40,15 +31,15 @@ const int TANZAKU_NUM_MAX = 30; //短冊の個数
 const int FRAME_OBSERVE_MIN = 4;
 
 //-ドア-//
-const double DOOR_V_NORMAL = 1000.0; //単位はmm/sec、両開き
-const double DOOR_V_HIGH = 1800.0; //単位はmm/sec、両開き
-const double DOOR_W_HALF = 800.0; //単位はmm
-const double DOOR_W_FULL = 1800.0; //暫定
+// const double DOOR_V_NORMAL = 1000.0; //単位はmm/sec、両開き
+// const double DOOR_V_HIGH = 1800.0; //単位はmm/sec、両開き
+// const double DOOR_W_HALF = 800.0; //単位はmm
+// const double DOOR_W_FULL = 1800.0; //暫定
 const int REQUIRED_FRAME_NORMAL_HALF = 16; //ゆっくりドアを開くときの所要フレーム数（半開き）
 const int REQUIRED_FRAME_NORMAL_FULL = 36;
 const int REQUIRED_FRAME_HIGH_HALF = 14; //素早くドアを開くときの所要フレーム数 （半開き）
 const int REQUIRED_FRAME_HIGH_FULL = 34;
-const int MARGIN = 2; //何フレーム前までにドアが開いていてほしいか。
+const int MARGIN = 10; //何フレーム前までにドアが開いていてほしいか。
 
 const double DOOR_W_MIN = 200.0; //これ以下だったら開けない
 const double DOOR_W_TH = 800.0; //一人or複数人の判定用

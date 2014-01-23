@@ -15,7 +15,7 @@ using namespace std;
 #define BUFFER_SIZE 60000
 #define STEP_NUM_PER_LINE 144//ステップ数（1ラインあたり）
 
-#define ORG_X 600.0
+#define ORG_X 400.0
 #define ORG_Y 0.0
 #define ORG_Z 2600.0
 #define ALPHA 70.0 / 180.0 * M_PI //取り付け角(10Hz)
