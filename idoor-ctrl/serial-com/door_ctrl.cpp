@@ -12,7 +12,7 @@
 #include "surveillance.h"
 
 #define BAUDRATE B9600
-#define MODEMDEVICE "/dev/ttyACM3"
+#define MODEMDEVICE "/dev/ttyACM0"
 #define _POSIX_SOURCE 1 /* POSIX 準拠のソース */
 #define FALSE 0
 #define TRUE 1

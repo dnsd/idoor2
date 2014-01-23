@@ -12,7 +12,7 @@
 #include "surveillance.h"
 
 #define BAUDRATE B9600
-#define MODEMDEVICE "/dev/ttyACM3"
+#define MODEMDEVICE "/dev/ttyACM0"
 #define _POSIX_SOURCE 1 /* POSIX 準拠のソース */
 #define FALSE 0
 #define TRUE 1
@@ -32,7 +32,8 @@ main()
 
     // ssmのイニシャライズ
     initSSM();
-    DORDER.create(5.0, 1.0);
+    DORDER.open(SSM_READ);
+
 
     fd = open(MODEMDEVICE, O_WRONLY | O_NOCTTY ); 
     if (fd <0) {perror(MODEMDEVICE); exit(-1); }
