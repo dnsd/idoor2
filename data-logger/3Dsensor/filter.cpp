@@ -106,7 +106,7 @@ int main (int argc, char *argv[])
                 cout << "timelength_noMovingObjects = " << timelength_noMovingObjects << endl;
                 // 動物体が長い間存在していなかったら、環境データを更新する。
                 if (timelength_noMovingObjects > 3
-                        && (get_time() - time_get_background) > 10)
+                        && (get_time() - time_get_background) > 60)
                 {
                     get_background (raw_data_U, background_U);
                     get_background (raw_data_D, background_D);
