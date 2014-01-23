@@ -20,6 +20,14 @@ typedef struct{
     double z[STEP_NUM];
 }LS3D;
 
+typedef struct{
+    double a[BORDER_NUM_MAX];
+    double b[BORDER_NUM_MAX];
+    double p0x[TANZAKU_NUM_MAX];
+    double p0y[TANZAKU_NUM_MAX];
+    double wn[TANZAKU_NUM_MAX];//位置データ(tan_pos or tan_x)が1mのときの短冊の幅
+}TANZAKU_FAC;
+
 class Tanzaku
 {
     public:
@@ -124,20 +132,29 @@ class Lane
 //mystd.cpp
 double get_time(void);
 //E.cpp
-void upd_tan_approach_cnt(vector< deque<double> >& G_data_buf, int tan_approach_cnt[]);
-void cal_frame_arrival(vector< deque<double> >& G_data_buf, vector< deque<double> >& v, int frame_arrival[]);
+// void upd_tan_approach_cnt(vector< deque<double> >& G_data_buf, int tan_approach_cnt[]);
+void upd_tan_approach_cnt(Tanzaku& tanzaku);
+// void cal_frame_arrival(vector< deque<double> >& G_data_buf, vector< deque<double> >& v, int frame_arrival[]);
+void cal_frame_arrival(Tanzaku& tanzaku);
 //tan.cpp
 double p_dist(double p0x, double p0y, double p1x, double p1y);
-void allocate_data_to_tanzaku(double tan_fac_a[], double tan_fac_b[], double steptime[], Step& sd, Cell& cell);
-void cal_pos_group_near(int step_num_in_cell[][TANZAKU_NUM_MAX], double sum_x_in_cell[][TANZAKU_NUM_MAX], double sum_y_in_cell[][TANZAKU_NUM_MAX], double sum_steptime_in_cell[][TANZAKU_NUM_MAX], vector< deque<double> >& tan_x_buf, vector< deque<double> >& tan_y_buf, vector< deque<double> >& tan_scantime_buf);
-void least_square(vector< deque<double> >& tan_time_buf, vector< deque<double> >& G_data_buf, vector< deque<double> >& v);
-void cal_w(double tan_wn[], vector< deque<double> >& G_data_buf, int tan_approach_cnt[], vector< deque<double> >& tan_w, deque<double>& sum_w);
+// void allocate_data_to_tanzaku(double tan_fac_a[], double tan_fac_b[], double steptime[], Step& sd, Cell& cell);
+void allocate_data_to_tanzaku(TANZAKU_FAC& fac, double steptime[], Step& sd, Cell& cell);
+// void cal_pos_group_near(int step_num_in_cell[][TANZAKU_NUM_MAX], double sum_x_in_cell[][TANZAKU_NUM_MAX], double sum_y_in_cell[][TANZAKU_NUM_MAX], double sum_steptime_in_cell[][TANZAKU_NUM_MAX], vector< deque<double> >& tan_x_buf, vector< deque<double> >& tan_y_buf, vector< deque<double> >& tan_scantime_buf);
+void cal_pos_group_near(Cell& cell, Tanzaku& tanzaku);
+// void least_square(vector< deque<double> >& tan_time_buf, vector< deque<double> >& G_data_buf, vector< deque<double> >& v);
+void least_square(Tanzaku& tanzaku);
+// void cal_w(double tan_wn[], vector< deque<double> >& G_data_buf, int tan_approach_cnt[], vector< deque<double> >& tan_w, deque<double>& sum_w);
+void cal_w(TANZAKU_FAC& fac, Tanzaku& tanzaku, deque<double>& sum_w);
 void clear_buf(vector< deque<double> >& G_data_buf, int tan_approach_cnt[]);
-void judge_open_mode_tan(int tan_approach_cnt[], int frame_arrival[], deque<double>& sum_w, int open_mode_tan[]);
+// void judge_open_mode_tan(int tan_approach_cnt[], int frame_arrival[], deque<double>& sum_w, int open_mode_tan[]);
+void judge_open_mode_tan(Tanzaku& tanzaku, deque<double>& sum_w);
 //log_ctr.cpp
 void initialize_open_log();
-void read_tan_fac(double tan_fac_a[], double tan_fac_b[], double tan_fac_p0x[], double tan_fac_p0y[]);
-void read_tan_wn(double tan_wn[]);
+// void read_tan_fac(double tan_fac_a[], double tan_fac_b[], double tan_fac_p0x[], double tan_fac_p0y[]);
+// void read_tan_wn(double tan_wn[]);
+void read_tan_fac(TANZAKU_FAC& fac);
+void read_tan_wn(TANZAKU_FAC& fac);
 void write_open_log(char data_det, double data_x[], double data_y[], double data_z[], int open_mode, int open_mode_tan[], vector< deque<double> >& tan_x_buf, vector< deque<double> >& v, int tan_approach_cnt[], double scantime);
 //open.cpp
 void judge_open_mode(Tanzaku& tan, Lane& lane, bool B_flag, int& open_mode);

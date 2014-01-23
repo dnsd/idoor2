@@ -21,11 +21,12 @@ FILE *fp; //ファイルポインタ
 ofstream ofs;
 
 //-短冊の形状データ-//
-double tan_fac_a[BORDER_NUM_MAX];
-double tan_fac_b[BORDER_NUM_MAX];
-double tan_fac_p0x[TANZAKU_NUM_MAX];
-double tan_fac_p0y[TANZAKU_NUM_MAX];
-double tan_wn[TANZAKU_NUM_MAX]; //位置データ(tan_pos or tan_x)が1mのときの短冊の幅
+// double tan_fac_a[BORDER_NUM_MAX];
+// double tan_fac_b[BORDER_NUM_MAX];
+// double tan_fac_p0x[TANZAKU_NUM_MAX];
+// double tan_fac_p0y[TANZAKU_NUM_MAX];
+// double tan_wn[TANZAKU_NUM_MAX]; //位置データ(tan_pos or tan_x)が1mのときの短冊の幅
+TANZAKU_FAC fac;
 
 //-B判定用-//
 bool B_flag = false;
@@ -68,8 +69,10 @@ int main (int argc, char **argv)
 
     //-初期設定-//
     initialize_open_log();
-    read_tan_fac(tan_fac_a, tan_fac_b, tan_fac_p0x, tan_fac_p0y);
-    read_tan_wn(tan_wn);
+    // read_tan_fac(tan_fac_a, tan_fac_b, tan_fac_p0x, tan_fac_p0y);
+    read_tan_fac(fac);
+    // read_tan_wn(tan_wn);
+    read_tan_wn(fac);
 
     // ステップタイムの設定
     for (int i = 1; i <= STEP_NUM; i++)
@@ -94,16 +97,23 @@ int main (int argc, char **argv)
             ped.set_data(OBJECT.data.det, OBJECT.data.dist, OBJECT.data.x, OBJECT.data.y, OBJECT.data.z);
 
             // 短冊を使った位置・速度データの計算
-            allocate_data_to_tanzaku(tan_fac_a, tan_fac_b, steptime, ped, cell);
-            cal_pos_group_near(cell.step_num, cell.sum_x, cell.sum_y, cell.sum_steptime, tanzaku.x, tanzaku.y, tanzaku.scan_time);
-            least_square(tanzaku.scan_time, tanzaku.x, tanzaku.v);
+            // allocate_data_to_tanzaku(tan_fac_a, tan_fac_b, steptime, ped, cell);
+            // allocate_data_to_tanzaku(fac.a, fac.b, steptime, ped, cell);
+            allocate_data_to_tanzaku(fac, steptime, ped, cell);
+            // cal_pos_group_near(cell.step_num, cell.sum_x, cell.sum_y, cell.sum_steptime, tanzaku.x, tanzaku.y, tanzaku.scan_time);
+            cal_pos_group_near(cell, tanzaku);
+            // least_square(tanzaku.scan_time, tanzaku.x, tanzaku.v);
+            least_square(tanzaku);
 
             // 短冊を使った開き判定
-            upd_tan_approach_cnt(tanzaku.x, tanzaku.approach_cnt);//upd_tan_approach_cntの設定
-            cal_frame_arrival(tanzaku.x, tanzaku.v, tanzaku.frame_arrival);//歩行者がドアに到達するまでのフレーム数
-            cal_w(tan_wn, tanzaku.x, tanzaku.approach_cnt, tanzaku.w, sum_w); //幅の算出（tan_xベース）
-            judge_open_mode_tan(tanzaku.approach_cnt, tanzaku.frame_arrival, sum_w, tanzaku.open_mode);
-
+            // upd_tan_approach_cnt(tanzaku.x, tanzaku.approach_cnt);//upd_tan_approach_cntの設定
+            upd_tan_approach_cnt(tanzaku);//upd_tan_approach_cntの設定
+            // cal_frame_arrival(tanzaku.x, tanzaku.v, tanzaku.frame_arrival);//歩行者がドアに到達するまでのフレーム数
+            cal_frame_arrival(tanzaku);//歩行者がドアに到達するまでのフレーム数
+            // cal_w(fac.wn, tanzaku.x, tanzaku.approach_cnt, tanzaku.w, sum_w); //幅の算出（tan_xベース）
+            cal_w(fac, tanzaku, sum_w); //幅の算出（tan_xベース）       
+            // judge_open_mode_tan(tanzaku.approach_cnt, tanzaku.frame_arrival, sum_w, tanzaku.open_mode);
+            judge_open_mode_tan(tanzaku, sum_w);
             // レーンを使った素通りのキャンセル
             lane.set_on_the_lane_flag(tanzaku);
             lane.set_entry_lane_flag(tanzaku);
