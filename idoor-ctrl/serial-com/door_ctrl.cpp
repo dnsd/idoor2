@@ -53,17 +53,30 @@ main()
     tcflush(fd, TCIFLUSH);
     tcsetattr(fd,TCSANOW,&newtio);
 
+    buf[0] = 'o';
+    buf2[0] = 'c';
     while(1)
     {
-        DORDER.readNew();
-        cout << DORDER.data.order << endl;
-        buf[0] = 'o';
-        buf2[0] = 'c';
-        if(DORDER.data.order >= 1)
+        // DORDER.readNew();
+        // cout << DORDER.data.order << endl;
+        // buf[0] = 'o';
+        // buf2[0] = 'c';
+        // if(DORDER.data.order >= 1)
+        // {
+        //     write(fd, buf, 1);
+        // }else{
+        //     write(fd, buf2, 1);
+        // }
+
+        if (DORDER.readNew() == true)
         {
-            write(fd, buf, 1);
-        }else{
-            write(fd, buf2, 1);
+            cout << DORDER.data.order << endl;
+            if(DORDER.data.order >= 1)
+            {
+                write(fd, buf, 1);
+            }else{
+                write(fd, buf2, 1);
+            }
         }
 
         usleep(1000);
