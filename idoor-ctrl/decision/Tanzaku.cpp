@@ -433,7 +433,7 @@ bool Tanzaku::isInDetectionArea(int tan_num, int index)
 {
     // 位置データがDetectionAreaにあるときtrue
     // 位置データがSurveillanceエリアの中にあるか？
-    if (x[tan_num][index] != 0.0 && isInDetectionArea(tan_num, index) == true)
+    if (x[tan_num][index] != 0.0 && isInSurveillanceArea(tan_num, index) == true)
     {
         // 位置データがDetectionエリアの境界の外にあるか？
         if (isInInnerArea(tan_num, index) == false)

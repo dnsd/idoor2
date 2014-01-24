@@ -101,12 +101,7 @@ int main (int argc, char **argv)
             judge_open_mode_tan(tanzaku, sum_w);
 
             // レーンを使った素通りのキャンセル
-            // lane.set_on_the_lane_flag(tanzaku);
-            // lane.set_entry_lane_flag(tanzaku);
-            // lane.set_pending_flag();
             lane.upd_pending_cnt(tanzaku);
-
-            // judge_B(ped, stop_cnt, B_flag);
             
             // 最終的な開き命令
             judge_open_mode(tanzaku, lane, B_flag, open_mode_door);
