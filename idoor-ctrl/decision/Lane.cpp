@@ -163,6 +163,7 @@ void Lane::upd_pending_cnt(Tanzaku& tanzaku)
         if (tanzaku.isInDetectionArea(tan_num, CUR_INDEX) == true)
         {
             target_lane_num = (int)tanzaku.x[tan_num][CUR_INDEX] / LANE_W;
+            if(target_lane_num <= PENDING_ZONE_WIDTH) target_lane_num = PENDING_ZONE_WIDTH; // tar_get_lane_num-PENDING_ZONE_WIDTHがマイナスにならないようにする
             for (int lane_num = target_lane_num - PENDING_ZONE_WIDTH; lane_num < target_lane_num + PENDING_ZONE_WIDTH; lane_num++)
             {
                 pending_cnt[lane_num] = PENDING_CNT_MAX;
