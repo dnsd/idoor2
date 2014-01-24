@@ -109,26 +109,15 @@ class Step
 class Lane
 {
     private:
-        bool on_the_lane_flag[LANE_NUM_MAX];
-        bool entry_lane_flag[LANE_NUM_MAX];
-        bool pending_flag[LANE_NUM_MAX];
         int pending_cnt[LANE_NUM_MAX];
     public:
-        void set_on_the_lane_flag(Tanzaku& tan);
-        bool hasObjects(int lane_num);
-        void set_entry_lane_flag(Tanzaku& tan);
-        bool hasObjectsEntry(int lane_num);
-        void set_pending_flag();
-        void upd_pending_cnt(Tanzaku& tanzaku);
-        void upd_pending_flag();
         bool isPending(int lane_num);
+        void upd_pending_cnt(Tanzaku& tanzaku);
 
         Lane(){
             for (int i = 0; i < LANE_NUM_MAX; i++)
             {
-                on_the_lane_flag[i] = false;
-                entry_lane_flag[i] = false;
-                pending_flag[i] = false;
+                pending_cnt[i] = 0;
             }
         }
 };
@@ -140,13 +129,13 @@ double get_time(void);
 void upd_tan_approach_cnt(Tanzaku& tanzaku);
 void cal_frame_arrival(Tanzaku& tanzaku);
 //tan.cpp
-double p_dist(double p0x, double p0y, double p1x, double p1y);
 void allocate_data_to_tanzaku(TANZAKU_FAC& fac, double steptime[], Step& sd, Cell& cell);
 void cal_pos_group_near(Cell& cell, Tanzaku& tanzaku);
-void least_square(Tanzaku& tanzaku);
 void cal_w(TANZAKU_FAC& fac, Tanzaku& tanzaku, deque<double>& sum_w);
 void clear_buf(vector< deque<double> >& G_data_buf, int tan_approach_cnt[]);
+void least_square(Tanzaku& tanzaku);
 void judge_open_mode_tan(Tanzaku& tanzaku, deque<double>& sum_w);
+double p_dist(double p0x, double p0y, double p1x, double p1y);
 //log_ctr.cpp
 void initialize_open_log();
 void read_tan_fac(TANZAKU_FAC& fac);

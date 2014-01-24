@@ -2,7 +2,6 @@
 #include <iomanip>
 #include <fstream>
 #include <sys/time.h>
-#include <time.h>
 #include <ssm.hpp>
 #include <cmath>
 #include "decision.h"

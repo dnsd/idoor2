@@ -3,7 +3,6 @@
 #include <iomanip>
 #include <cmath>
 #include <fstream>
-#include <time.h>
 #include <sys/time.h>
 #include "decision.h"
 

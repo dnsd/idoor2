@@ -2,7 +2,6 @@
 #include <iomanip>
 #include <fstream>
 #include <sys/time.h>
-#include <time.h>
 #include <ssm.hpp>
 #include <cmath>
 #include "decision.h"
@@ -13,15 +12,6 @@
 #include <iterator>
 
 using namespace std;
-
-// 2点間の距離を求める
-double p_dist(double p0x, double p0y, double p1x, double p1y)
-{
-    double dist2, dist;
-    dist2 = (p1x - p0x) * (p1x - p0x) + (p1y - p0y) * (p1y - p0y);
-    dist = sqrt(dist2);
-    return dist;
-}
 
 void allocate_data_to_tanzaku(TANZAKU_FAC& fac, double steptime[], Step& sd, Cell& cell)
 {
@@ -356,6 +346,15 @@ void least_square(Tanzaku& tanzaku)
         }
 
     }
+}
+
+// 2点間の距離を求める
+double p_dist(double p0x, double p0y, double p1x, double p1y)
+{
+    double dist2, dist;
+    dist2 = (p1x - p0x) * (p1x - p0x) + (p1y - p0y) * (p1y - p0y);
+    dist = sqrt(dist2);
+    return dist;
 }
 
 //スキャンの方向を考慮する方法（必ず同じ方向のものと比較する）
