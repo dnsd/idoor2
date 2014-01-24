@@ -37,6 +37,8 @@ class Tanzaku
         int open_mode[TANZAKU_NUM_MAX]; //短冊ごとの判定結果
 
         bool isInSurveillanceArea(int tan_num, int index);
+        bool isInInnerArea(int tan_num, int index);
+        bool isInDetectionArea(int tan_num, int index);
         bool isCancel(Lane& lane, int tan_num);
 
         vector< deque<double> > x;
@@ -110,12 +112,15 @@ class Lane
         bool on_the_lane_flag[LANE_NUM_MAX];
         bool entry_lane_flag[LANE_NUM_MAX];
         bool pending_flag[LANE_NUM_MAX];
+        int pending_cnt[LANE_NUM_MAX];
     public:
         void set_on_the_lane_flag(Tanzaku& tan);
         bool hasObjects(int lane_num);
         void set_entry_lane_flag(Tanzaku& tan);
         bool hasObjectsEntry(int lane_num);
         void set_pending_flag();
+        void upd_pending_cnt(Tanzaku& tanzaku);
+        void upd_pending_flag();
         bool isPending(int lane_num);
 
         Lane(){

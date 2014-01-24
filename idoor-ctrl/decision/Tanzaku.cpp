@@ -429,15 +429,33 @@ bool Tanzaku::isCancel(Lane& lane, int tan_num)
     return false;
 }
 
-bool Tanzaku::isInSurveillanceArea(int tan_num, int index)
+bool Tanzaku::isInDetectionArea(int tan_num, int index)
+{
+    // 位置データがDetectionAreaにあるときtrue
+    // 位置データがSurveillanceエリアの中にあるか？
+    if (x[tan_num][index] != 0.0 && isInDetectionArea(tan_num, index) == true)
+    {
+        // 位置データがDetectionエリアの境界の外にあるか？
+        if (isInInnerArea(tan_num, index) == false)
+        {
+            return true;
+        }else{
+            return false;
+        }
+    }else{
+        return false;
+    }
+}
+
+bool Tanzaku::isInInnerArea(int tan_num, int index)
 {
     // 位置データが存在するときエリアの内外判定をする
     if (x[tan_num][index] != 0.0)
     {
         // 物体がエリアの中にあるとき真
-        if (x[tan_num][index] <= AREA_E_END_X
-                && AREA_E_START_Y <= y[tan_num][index]
-                && y[tan_num][index] <= AREA_E_END_Y)
+        if (x[tan_num][index] <= AREA_D_END_X
+                && AREA_D_START_Y <= y[tan_num][index]
+                && y[tan_num][index] <= AREA_D_END_Y)
         {
             return true;
         }else{
@@ -448,9 +466,44 @@ bool Tanzaku::isInSurveillanceArea(int tan_num, int index)
     if (x[tan_num][index] == 0.0 && x[tan_num][index-1] != 0.0)
     {
         // 物体がエリアの中にあればフラグをセット
-        if (x[tan_num][index-1] <= AREA_E_END_X
-                && AREA_E_START_Y <= y[tan_num][index-1]
-                && y[tan_num][index-1] <= AREA_E_END_Y)
+        if (x[tan_num][index-1] <= AREA_D_END_X
+                && AREA_D_START_Y <= y[tan_num][index-1]
+                && y[tan_num][index-1] <= AREA_D_END_Y)
+        {
+            return true;
+        }else{
+            return false;
+        }
+    }
+    // データが無いときはクリア
+    if (x[tan_num][index] == 0.0 && x[tan_num][index-1] == 0.0)
+    {
+        return false;
+    }
+}
+
+bool Tanzaku::isInSurveillanceArea(int tan_num, int index)
+{
+    // 位置データが存在するときエリアの内外判定をする
+    if (x[tan_num][index] != 0.0)
+    {
+        // 物体がエリアの中にあるとき真
+        if (x[tan_num][index] <= AREA_S_END_X
+                && AREA_S_START_Y <= y[tan_num][index]
+                && y[tan_num][index] <= AREA_S_END_Y)
+        {
+            return true;
+        }else{
+            return false;
+        }
+    }
+    // いっこ前にデータがあるときは保留
+    if (x[tan_num][index] == 0.0 && x[tan_num][index-1] != 0.0)
+    {
+        // 物体がエリアの中にあればフラグをセット
+        if (x[tan_num][index-1] <= AREA_S_END_X
+                && AREA_S_START_Y <= y[tan_num][index-1]
+                && y[tan_num][index-1] <= AREA_S_END_Y)
         {
             return true;
         }else{

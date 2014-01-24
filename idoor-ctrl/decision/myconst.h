@@ -46,20 +46,20 @@ const double DOOR_W_TH = 800.0; //一人or複数人の判定用
 
 //lane
 const double LANE_W = 100.0;
-const int LANE_NUM_MAX = 26;
+const int LANE_NUM_MAX = 30;
+const int PENDING_CNT_MAX = 20; // pending zoneが消えるまでの時間（フレーム数）
 
-// エリアの定義
-const double AREA_E_START_Y = -1600.0;
-const double AREA_E_END_Y = 1000.0;
-const double AREA_E_START_X = 0.0;
-const double AREA_E_END_X = 2400.0;
+// エリアS("S"urveilance)の定義
+const double AREA_S_START_Y = -1600.0;
+const double AREA_S_END_Y = 1600.0;
+const double AREA_S_START_X = 0.0;
+const double AREA_S_END_X = 2600.0;
 const int FRAME_OBSERVE = 5;
 const int PENDING_ZONE_WIDTH = 4; // 片側
 
-// エリアBの定義
-const double AREA_B_START_Y = -1000.0; //静止検出エリアの範囲の設定
-const double AREA_B_END_Y = 1000.0; //静止検出エリアの範囲の設定
-const double AREA_B_START_X = 0.0; //静止検出エリアの範囲の設定
-const double AREA_B_END_X = 800.0; //静止検出エリアの範囲の設定
-const int TH_NUM_OF_STEP_FOR_B = 30;
-const int STOP_CNT_TH = 10; //このフレーム数の間静止物体があればドアを開ける。
+// エリアD("D"eteciton)エリアの定義
+const double AREA_D_MARGIN = 300.0;
+const double AREA_D_START_Y = AREA_S_START_Y + AREA_D_MARGIN;
+const double AREA_D_END_Y = AREA_S_END_Y - AREA_D_MARGIN;
+const double AREA_D_START_X = 0.0;
+const double AREA_D_END_X = AREA_S_END_X - AREA_D_MARGIN;
