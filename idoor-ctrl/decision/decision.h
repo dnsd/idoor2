@@ -36,7 +36,7 @@ class Tanzaku
 
         int open_mode[TANZAKU_NUM_MAX]; //短冊ごとの判定結果
 
-        bool isInDetectionArea(int tan_num, int index);
+        bool isInSurveillanceArea(int tan_num, int index);
         bool isCancel(Lane& lane, int tan_num);
 
         vector< deque<double> > x;

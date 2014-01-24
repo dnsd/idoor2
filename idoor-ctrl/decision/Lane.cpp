@@ -73,9 +73,9 @@ void Lane::set_entry_lane_flag(Tanzaku& tan)
             entry_lane_flag[i] = false;
         }
 
-        if (tan.x[tan_num][CUR_INDEX] != 0.0 && tan.isInDetectionArea(tan_num, CUR_INDEX) == true)
+        if (tan.x[tan_num][CUR_INDEX] != 0.0 && tan.isInSurveillanceArea(tan_num, CUR_INDEX) == true)
         {
-            if (tan.isInDetectionArea(tan_num, PREPRE_INDEX) == false)
+            if (tan.isInSurveillanceArea(tan_num, PREPRE_INDEX) == false)
             {
                 entry_lane_num = (int)tan.x[tan_num][CUR_INDEX] / 100;
                 entry_lane_flag[entry_lane_num] = true;

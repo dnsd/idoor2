@@ -391,7 +391,45 @@ void upd_tan_approach_cnt(Tanzaku& tanzaku)
     }
 }
 
-bool Tanzaku::isInDetectionArea(int tan_num, int index)
+bool Tanzaku::isCancel(Lane& lane, int tan_num)
+{
+    // 物体がエリア内にいるとき（条件1）
+    if (isInSurveillanceArea(tan_num, CUR_INDEX) == true)
+    {
+        // 位置データがあるとき
+        if (x[tan_num][CUR_INDEX] != 0.0)
+        {
+            int tmp = (int)x[tan_num][CUR_INDEX] / 100;
+            if (lane.isPending(tmp) == true)
+            {
+                return true;
+            }
+        }
+        // いっこ前なら位置データがあるとき
+        if (x[tan_num][CUR_INDEX] == 0.0 && x[tan_num][PRE_INDEX] != 0.0)
+        {
+            int tmp = (int)x[tan_num][PRE_INDEX] / 100;
+            if (lane.isPending(tmp) == true)
+            {
+                return true;
+            }
+        }
+        // 位置データがないとき
+        if (x[tan_num][CUR_INDEX] == 0.0 && x[tan_num][PRE_INDEX] == 0.0)
+        {
+            return true;
+        }
+    }
+    // 物体がエリア内にいないとき（条件1）
+    if (isInSurveillanceArea(tan_num, CUR_INDEX) == false)
+    {
+        //cancel_flag[tan_num] = true;
+        return true;
+    }
+    return false;
+}
+
+bool Tanzaku::isInSurveillanceArea(int tan_num, int index)
 {
     // 位置データが存在するときエリアの内外判定をする
     if (x[tan_num][index] != 0.0)
@@ -426,40 +464,4 @@ bool Tanzaku::isInDetectionArea(int tan_num, int index)
     }
 }
 
-bool Tanzaku::isCancel(Lane& lane, int tan_num)
-{
-    // 物体がエリア内にいるとき（条件1）
-    if (isInDetectionArea(tan_num, CUR_INDEX) == true)
-    {
-        // 位置データがあるとき
-        if (x[tan_num][CUR_INDEX] != 0.0)
-        {
-            int tmp = (int)x[tan_num][CUR_INDEX] / 100;
-            if (lane.isPending(tmp) == true)
-            {
-                return true;
-            }
-        }
-        // いっこ前なら位置データがあるとき
-        if (x[tan_num][CUR_INDEX] == 0.0 && x[tan_num][PRE_INDEX] != 0.0)
-        {
-            int tmp = (int)x[tan_num][PRE_INDEX] / 100;
-            if (lane.isPending(tmp) == true)
-            {
-                return true;
-            }
-        }
-        // 位置データがないとき
-        if (x[tan_num][CUR_INDEX] == 0.0 && x[tan_num][PRE_INDEX] == 0.0)
-        {
-            return true;
-        }
-    }
-    // 物体がエリア内にいないとき（条件1）
-    if (isInDetectionArea(tan_num, CUR_INDEX) == false)
-    {
-        //cancel_flag[tan_num] = true;
-        return true;
-    }
-    return false;
-}
+
