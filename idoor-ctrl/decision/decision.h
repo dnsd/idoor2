@@ -8,7 +8,7 @@
 using namespace std;
 
 class Tanzaku;
-class Cell;
+struct Cell;
 class Step;
 class Lane;
 
@@ -64,9 +64,8 @@ class Tanzaku
         }
 };
 
-class Cell
+struct Cell
 {
-    public:
         int step_num[TAN_CELL_NUM_MAX][TANZAKU_NUM_MAX]; //セル内にあるステップの数
         double sum_x[TAN_CELL_NUM_MAX][TANZAKU_NUM_MAX]; //セル内にあるステップのx座標値の合計
         double sum_y[TAN_CELL_NUM_MAX][TANZAKU_NUM_MAX]; //セル内にあるステップのy座標値の合計
@@ -125,39 +124,23 @@ class Lane
 //-関数のプロトタイプ宣言-//
 //mystd.cpp
 double get_time(void);
-//E.cpp
-void upd_tan_approach_cnt(Tanzaku& tanzaku);
-void cal_frame_arrival(Tanzaku& tanzaku);
 //tan.cpp
 void allocate_data_to_tanzaku(TANZAKU_FAC& fac, double steptime[], Step& sd, Cell& cell);
+void cal_frame_arrival(Tanzaku& tanzaku);
 void cal_pos_group_near(Cell& cell, Tanzaku& tanzaku);
 void cal_w(TANZAKU_FAC& fac, Tanzaku& tanzaku, deque<double>& sum_w);
 void clear_buf(vector< deque<double> >& G_data_buf, int tan_approach_cnt[]);
 void least_square(Tanzaku& tanzaku);
 void judge_open_mode_tan(Tanzaku& tanzaku, deque<double>& sum_w);
 double p_dist(double p0x, double p0y, double p1x, double p1y);
+void upd_tan_approach_cnt(Tanzaku& tanzaku);
 //log_ctr.cpp
 void initialize_open_log();
 void read_tan_fac(TANZAKU_FAC& fac);
 void read_tan_wn(TANZAKU_FAC& fac);
-void write_open_log(char data_det, double data_x[], double data_y[], double data_z[], int open_mode, int open_mode_tan[], vector< deque<double> >& tan_x_buf, vector< deque<double> >& v, int tan_approach_cnt[], double scantime);
+void write_open_log(Step& sd, Tanzaku& tanzaku, int open_mode, double scantime);
 //open.cpp
 void judge_open_mode(Tanzaku& tan, Lane& lane, bool B_flag, int& open_mode);
-
-//-グローバル変数-//
-//ファイル読み込み用
-extern double a[BORDER_NUM_MAX];
-extern double b[BORDER_NUM_MAX];
-
-//tan用
-extern double p0x[TANZAKU_NUM_MAX];
-extern double p0y[TANZAKU_NUM_MAX];
-
-extern double tan_wn[TANZAKU_NUM_MAX]; //位置データが1mのときの短冊の幅
-extern double w1[TANZAKU_NUM_MAX];
-extern double tan_w[TANZAKU_NUM_MAX]; //短冊の幅
-
-// extern double X_MAX; //センサの観測領域の限界（x軸）//frame_observeが変数のとき
 
 //-タイムゾーン設定用-//
 extern double steptime[STEP_NUM];

@@ -12,6 +12,8 @@ const double STOP_TH = 100.0; // 10Hz //単位はmm
 //tan
 const int TAN_CELL_NUM_MAX = 30;
 const double TAN_CELL_RES = 100.0;
+const int TANZAKU_NUM_MAX = 30; //短冊の個数
+const int FRAME_OBSERVE = 5;
 
 // バッファ関連
 const int BUFFER_LENGTH = 6; //最小二乗法のバッファ範囲
@@ -25,10 +27,6 @@ const double MIN_SPEED = 15.0; //0.15m/s
 const double V_MAX_TH = 3000.0; //3000mm/s以上で移動する人は観測しない
 
 const int BORDER_NUM_MAX = 29; //短冊の境界線の本数
-const int TANZAKU_NUM_MAX = 30; //短冊の個数
-
-//開閉判定用
-const int FRAME_OBSERVE_MIN = 4;
 
 //-ドア-//
 // const double DOOR_V_NORMAL = 1000.0; //単位はmm/sec、両開き
@@ -48,14 +46,13 @@ const double DOOR_W_TH = 800.0; //一人or複数人の判定用
 const double LANE_W = 100.0;
 const int LANE_NUM_MAX = 30;
 const int PENDING_CNT_MAX = 20; // pending zoneが消えるまでの時間（フレーム数）
+const int PENDING_ZONE_WIDTH = 4; // 片側
 
 // エリアS("S"urveilance)の定義
 const double AREA_S_START_Y = -1600.0;
 const double AREA_S_END_Y = 1600.0;
 const double AREA_S_START_X = 0.0;
 const double AREA_S_END_X = 2600.0;
-const int FRAME_OBSERVE = 5;
-const int PENDING_ZONE_WIDTH = 4; // 片側
 
 // エリアD("D"eteciton)エリアの定義
 const double AREA_D_MARGIN = 300.0;

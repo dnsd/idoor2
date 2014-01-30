@@ -26,22 +26,6 @@ void initialize_open_log()
     olog.close();
 }
 
-// void read_tan_fac(double tan_fac_a[], double tan_fac_b[], double tan_fac_p0x[], double tan_fac_p0y[])
-// {
-//     FILE *fp;
-//     //tan_facの読み込み //y=ax+bで考える
-//     fp = fopen("tanzaku_fac","r");
-//     for(int i=0; i<BORDER_NUM_MAX; i++)
-//     {
-//         fscanf(fp, "%lf", &tan_fac_a[i]);
-//         fscanf(fp, "%lf", &tan_fac_b[i]);
-
-//         tan_fac_p0x[i] = 0.0;
-//         tan_fac_p0y[i] = 0.0;
-//     }
-//     fclose(fp);
-// }
-
 void read_tan_fac(TANZAKU_FAC& fac)
 {
     FILE *fp;
@@ -58,18 +42,6 @@ void read_tan_fac(TANZAKU_FAC& fac)
     fclose(fp);
 }
 
-// void read_tan_wn(double tan_wn[])
-// {
-//     FILE *fp;
-//     //wnの読み込み（tan_xベース）
-//     fp = fopen("wn","r");
-//     for(int i=0; i<TANZAKU_NUM_MAX; i++)
-//     {
-//         fscanf(fp, "%lf", &tan_wn[i]);
-//     }
-//     fclose(fp);
-// }
-
 void read_tan_wn(TANZAKU_FAC& fac)
 {
     FILE *fp;
@@ -83,9 +55,7 @@ void read_tan_wn(TANZAKU_FAC& fac)
 }
 
 // 1スキャンのログを複数行に分ける
-void write_open_log(char data_det, double data_x[], double data_y[], double data_z[],
-        int open_mode, int open_mode_tan[], vector< deque<double> >& tan_x_buf, 
-        vector< deque<double> >& v, int tan_approach_cnt[], double scantime)
+void write_open_log(Step& sd, Tanzaku& tanzaku, int open_mode, double scantime)
 {
     //ファイルオープン
     ofstream olog;
@@ -93,22 +63,22 @@ void write_open_log(char data_det, double data_x[], double data_y[], double data
     olog.precision(16);
 
     //スキャン方向の書き込み(1)
-    olog << data_det << "," << endl;
+    olog << sd.det[CUR_INDEX] << "," << endl;
 
     //スキャンデータの書き込み(2)
     for (int i = 0; i < STEP_NUM; i++)
     {
-        olog << data_x[i] << ",";
+        olog << sd.x[i][CUR_INDEX] << ",";
     }
     olog << endl;
     for (int i = 0; i < STEP_NUM; i++)
     {
-        olog << data_y[i] << ",";
+        olog << sd.y[i][CUR_INDEX] << ",";
     }
     olog << endl;
     for (int i = 0; i < STEP_NUM; i++)
     {
-        olog << data_z[i] << ",";
+        olog << sd.z[i][CUR_INDEX] << ",";
     }
     olog << endl;
 
@@ -119,25 +89,25 @@ void write_open_log(char data_det, double data_x[], double data_y[], double data
     //開閉判定情報の書き込み（短冊）(4)
     for (int tan_num = 0; tan_num < TANZAKU_NUM_MAX; tan_num++)
     {
-        olog << open_mode_tan[tan_num] << ",";
+        olog << tanzaku.open_mode[tan_num] << ",";
     }
 
     //短冊ごとのtan_x_buf(5)
     for (int tan_num = 0; tan_num < TANZAKU_NUM_MAX; tan_num++)
     {
-        olog << tan_x_buf[tan_num][CUR_INDEX] << ",";
+        olog << tanzaku.x[tan_num][CUR_INDEX] << ",";
     }
 
     //短冊ごとのG_v_cur(6)
     for (int tan_num = 0; tan_num < TANZAKU_NUM_MAX; tan_num++)
     {
-        olog << v[tan_num][CUR_INDEX] << ",";
+        olog << tanzaku.v[tan_num][CUR_INDEX] << ",";
     }
 
     //短冊ごとのapproach_cnt(7)
     for (int tan_num = 0; tan_num < TANZAKU_NUM_MAX; tan_num++)
     {
-        olog << tan_approach_cnt[tan_num] << ",";
+        olog << tanzaku.approach_cnt[tan_num] << ",";
     }
 
     // //スキャン時刻
