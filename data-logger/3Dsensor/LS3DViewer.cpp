@@ -174,12 +174,29 @@ void display(void)
         glutSolidSphere(100.0, 20, 20);//引数：(半径, Z軸まわりの分割数, Z軸に沿った分割数)
         glPopMatrix();
 
+        //ドア（左側）
+    glColor3d(0.0, 0.0, 0.0);
+    glBegin(GL_LINE_LOOP);
+    glVertex3d(0.0, 0.0, 0.0);
+    glVertex3d(0.0, 0.0-DOOR_WIDTH, 0.0);
+    glVertex3d(0.0, 0.0-DOOR_WIDTH, 0.0+DOOR_HEIGHT);
+    glVertex3d(0.0, 0.0, 0.0+DOOR_HEIGHT);
+    glEnd();
+    // ドア（右側）
+    glColor3d(0.0, 0.0, 0.0);
+    glBegin(GL_LINE_LOOP);
+    glVertex3d(0.0, 0.0, 0.0);
+    glVertex3d(0.0, 0.0+DOOR_WIDTH, 0.0);
+    glVertex3d(0.0, 0.0+DOOR_WIDTH, 0.0+DOOR_HEIGHT);
+    glVertex3d(0.0, 0.0, 0.0+DOOR_HEIGHT);
+    glEnd();
+
                 // //円周を線だけで表示(1000)
 	//     glBegin( GL_LINE_LOOP );
 	//     float cx, cy, cz; 
 	//     glColor3f( 0.0, 0.0, 0.0 );//white
 	//     for(int i=0;i<=180;i++){
-	//     cx = 1000.0*sin(M_PI*(double)i/(double)180.0);
+	//     cx = 1000.0*sin(XM_PI*(double)i/(double)180.0);
 	//     cy = 1000.0*cos(M_PI*(double)i/(double)180.0);
 	//     cz = -SENSOR_HEIGHT;
 	//     glVertex3f( cx, cy, cz );
