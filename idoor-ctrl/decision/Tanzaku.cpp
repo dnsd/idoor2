@@ -516,4 +516,30 @@ bool Tanzaku::isInSurveillanceArea(int tan_num, int index)
     }
 }
 
+int Tanzaku::judgeOpen(Lane& lane)
+{
+    int vote = 0;
+
+    //-open_modeの判定と出力-//
+    for (int tan_num = 0; tan_num < TANZAKU_NUM_MAX; tan_num++)
+    {
+        if (isCancel(lane, tan_num) == false)
+        {
+            if (open_mode[tan_num] == 4)
+            {
+                return 4;
+            }else if (open_mode[tan_num] == 2)
+            {
+                return 2;
+            }else if (open_mode[tan_num] == 3)
+            {
+                vote = 3;
+            }else if (open_mode[tan_num] == 1)
+            {
+                vote = 1;
+            }
+        }   
+    }
+    return vote;
+}
 

@@ -1,5 +1,5 @@
 decision:main.cpp
-	g++ -o decision main.cpp mystd.cpp Tanzaku.cpp log_ctr.cpp Lane.cpp Step.cpp open.cpp -lssm -lm
+	g++ -o decision Area.cpp main.cpp mystd.cpp Tanzaku.cpp log_ctr.cpp Lane.cpp Step.cpp open.cpp -lssm -lm
 spotR_GHI:spotR_GHI.cpp
 	g++ -o spotR_GHI spotR_GHI.cpp -lglut -lGLU -lGL -lssm
 spotR_ABCDEF:spotR_ABCDEF.cpp

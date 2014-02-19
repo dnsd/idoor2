@@ -47,56 +47,56 @@ SSMApi<LS3D> SCAN_DATA("LS3D", 0);
 
 int main(int argc, char **argv)
 {
-	//SSM
-	initSSM();
-	SCAN_DATA.open(SSM_READ);
+    //SSM
+    initSSM();
+    SCAN_DATA.open(SSM_READ);
 
-	//GLUTの初期化
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
-	glutInitWindowSize(640, 640);
-	glutInitWindowPosition(0, 0);
-	glutCreateWindow("Viewer");
+    //GLUTの初期化
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
+    glutInitWindowSize(640, 640);
+    glutInitWindowPosition(0, 0);
+    glutCreateWindow("Viewer");
 
-	// コールバック関数の登録
-	glutDisplayFunc(display);
-	glutReshapeFunc(reshape);
-	glutMouseFunc(mouse);
-	glutMotionFunc(motion);
-	glutIdleFunc(idle);
+    // コールバック関数の登録
+    glutDisplayFunc(display);
+    glutReshapeFunc(reshape);
+    glutMouseFunc(mouse);
+    glutMotionFunc(motion);
+    glutIdleFunc(idle);
 
-	// 環境初期化
-	initEnvironment();
+    // 環境初期化
+    initEnvironment();
 
-	// GLUTのメインループに処理を移す
-	glutMainLoop();
+    // GLUTのメインループに処理を移す
+    glutMainLoop();
 
-	SCAN_DATA.close();
-	endSSM();
-	return 0;
+    SCAN_DATA.close();
+    endSSM();
+    return 0;
 }
 
 void display(void)
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//変換行列
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glTranslatef(0.0, 0.0, -camera_distance);
-	glRotatef(-camera_pitch, 1.0, 0.0, 0.0);
-	glRotatef(-camera_yaw, 0.0, 1.0, 0.0);
-	glRotatef(-camera_roll, 0.0, 0.0, 1.0);
+    //変換行列
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glTranslatef(0.0, 0.0, -camera_distance);
+    glRotatef(-camera_pitch, 1.0, 0.0, 0.0);
+    glRotatef(-camera_yaw, 0.0, 1.0, 0.0);
+    glRotatef(-camera_roll, 0.0, 0.0, 1.0);
 
-	// 変換行列を設定（物体のモデル座標系→カメラ座標系）
-	//（物体が (0.0, 1.0, 0.0) の位置にあり、静止しているとする）
-	// glTranslatef( -1000.0, 0.0, SENSOR_POS_Z);
-	glTranslatef(-1000.0, 0.0, 0.0);
+    // 変換行列を設定（物体のモデル座標系→カメラ座標系）
+    //（物体が (0.0, 1.0, 0.0) の位置にあり、静止しているとする）
+    // glTranslatef( -1000.0, 0.0, SENSOR_POS_Z);
+    glTranslatef(-1000.0, 0.0, 0.0);
 
-	if (SCAN_DATA.readNew())
-	{
-		//スキャンデータの格納
-		if (SCAN_DATA.data.det == 'U')
+    if (SCAN_DATA.readNew())
+    {
+        //スキャンデータの格納
+        if (SCAN_DATA.data.det == 'U')
         {
             for (int i = 0; i < STEP_NUM_MAX; i++)
             {
@@ -121,16 +121,16 @@ void display(void)
         glPointSize(pointsize);
         glBegin(GL_POINTS);
         for(int j=0; j<2720; j++)
-         {
-             glColor3d(1.0, 0.0, 0.0);
-             glVertex3d(vertex_U[j][0], vertex_U[j][1], vertex_U[j][2]);
-         }
-         for(int j=0; j<2720; j++)
-         {
-             glColor3d(0.0, 0.0, 1.0);
-             glVertex3d(vertex_D[j][0], vertex_D[j][1], vertex_D[j][2]);
-         }
-         glEnd();
+        {
+            glColor3d(1.0, 0.0, 0.0);
+            glVertex3d(vertex_U[j][0], vertex_U[j][1], vertex_U[j][2]);
+        }
+        for(int j=0; j<2720; j++)
+        {
+            glColor3d(0.0, 0.0, 1.0);
+            glVertex3d(vertex_D[j][0], vertex_D[j][1], vertex_D[j][2]);
+        }
+        glEnd();
 
         //1メートルのエリア
         glColor3d(0.0, 0.0, 0.0);
@@ -175,114 +175,114 @@ void display(void)
         glPopMatrix();
 
         //ドア（左側）
-    glColor3d(0.0, 0.0, 0.0);
-    glBegin(GL_LINE_LOOP);
-    glVertex3d(0.0, 0.0, 0.0);
-    glVertex3d(0.0, 0.0-DOOR_WIDTH, 0.0);
-    glVertex3d(0.0, 0.0-DOOR_WIDTH, 0.0+DOOR_HEIGHT);
-    glVertex3d(0.0, 0.0, 0.0+DOOR_HEIGHT);
-    glEnd();
-    // ドア（右側）
-    glColor3d(0.0, 0.0, 0.0);
-    glBegin(GL_LINE_LOOP);
-    glVertex3d(0.0, 0.0, 0.0);
-    glVertex3d(0.0, 0.0+DOOR_WIDTH, 0.0);
-    glVertex3d(0.0, 0.0+DOOR_WIDTH, 0.0+DOOR_HEIGHT);
-    glVertex3d(0.0, 0.0, 0.0+DOOR_HEIGHT);
-    glEnd();
+        glColor3d(0.0, 0.0, 0.0);
+        glBegin(GL_LINE_LOOP);
+        glVertex3d(0.0, 0.0, 0.0);
+        glVertex3d(0.0, 0.0-910.0, 0.0);
+        glVertex3d(0.0, 0.0-910.0, 0.0+1820.0);
+        glVertex3d(0.0, 0.0, 0.0+1820.0);
+        glEnd();
+        // ドア（右側）
+        glColor3d(0.0, 0.0, 0.0);
+        glBegin(GL_LINE_LOOP);
+        glVertex3d(0.0, 0.0, 0.0);
+        glVertex3d(0.0, 0.0+910.0, 0.0);
+        glVertex3d(0.0, 0.0+910.0, 0.0+1820.0);
+        glVertex3d(0.0, 0.0, 0.0+1820.0);
+        glEnd();
 
-                // //円周を線だけで表示(1000)
-	//     glBegin( GL_LINE_LOOP );
-	//     float cx, cy, cz; 
-	//     glColor3f( 0.0, 0.0, 0.0 );//white
-	//     for(int i=0;i<=180;i++){
-	//     cx = 1000.0*sin(XM_PI*(double)i/(double)180.0);
-	//     cy = 1000.0*cos(M_PI*(double)i/(double)180.0);
-	//     cz = -SENSOR_HEIGHT;
-	//     glVertex3f( cx, cy, cz );
-	//     }
-	//     glEnd();
+        // //円周を線だけで表示(1000)
+        //     glBegin( GL_LINE_LOOP );
+        //     float cx, cy, cz; 
+        //     glColor3f( 0.0, 0.0, 0.0 );//white
+        //     for(int i=0;i<=180;i++){
+        //     cx = 1000.0*sin(XM_PI*(double)i/(double)180.0);
+        //     cy = 1000.0*cos(M_PI*(double)i/(double)180.0);
+        //     cz = -SENSOR_HEIGHT;
+        //     glVertex3f( cx, cy, cz );
+        //     }
+        //     glEnd();
 
         glutSwapBuffers();
-	} //if(SCAN_DATA.readNew)
-	sleepSSM(0.05);
+    } //if(SCAN_DATA.readNew)
+    sleepSSM(0.05);
 }
 
 void reshape(int w, int h)
 {
-	// ウィンドウ内の描画を行う範囲を設定（ウィンドウ全体に描画するように設定）
-	glViewport(0, 0, w, h);
+    // ウィンドウ内の描画を行う範囲を設定（ウィンドウ全体に描画するように設定）
+    glViewport(0, 0, w, h);
 
-	// カメラ座標系→スクリーン座標系への変換行列を設定
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(45.0, (double)w/h, 100.0, 50000.0); //あやしい
+    // カメラ座標系→スクリーン座標系への変換行列を設定
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(45.0, (double)w/h, 100.0, 50000.0); //あやしい
 }
 
 void mouse(int button, int state, int mx, int my)
 {
-	// 左ボタンが押されたらドラッグ開始のフラグを設定
-	if ( ( button == GLUT_LEFT_BUTTON ) && ( state == GLUT_DOWN ) )
-		drag_mouse_l = 1;
-	// 左ボタンが離されたらドラッグ終了のフラグを設定
-	else if ( ( button == GLUT_LEFT_BUTTON ) && ( state == GLUT_UP ) )
-		drag_mouse_l = 0;
+    // 左ボタンが押されたらドラッグ開始のフラグを設定
+    if ( ( button == GLUT_LEFT_BUTTON ) && ( state == GLUT_DOWN ) )
+        drag_mouse_l = 1;
+    // 左ボタンが離されたらドラッグ終了のフラグを設定
+    else if ( ( button == GLUT_LEFT_BUTTON ) && ( state == GLUT_UP ) )
+        drag_mouse_l = 0;
 
-	// 右ボタンが押されたらドラッグ開始のフラグを設定
-	if ( ( button == GLUT_RIGHT_BUTTON ) && ( state == GLUT_DOWN ) )
-		drag_mouse_r = 1;
-	// 右ボタンが離されたらドラッグ終了のフラグを設定
-	else if ( ( button == GLUT_RIGHT_BUTTON ) && ( state == GLUT_UP ) )
-		drag_mouse_r = 0;
+    // 右ボタンが押されたらドラッグ開始のフラグを設定
+    if ( ( button == GLUT_RIGHT_BUTTON ) && ( state == GLUT_DOWN ) )
+        drag_mouse_r = 1;
+    // 右ボタンが離されたらドラッグ終了のフラグを設定
+    else if ( ( button == GLUT_RIGHT_BUTTON ) && ( state == GLUT_UP ) )
+        drag_mouse_r = 0;
 
-	// 現在のマウス座標を記録
-	last_mouse_x = mx;
-	last_mouse_y = my;
+    // 現在のマウス座標を記録
+    last_mouse_x = mx;
+    last_mouse_y = my;
 }
 
 void motion(int mx, int my)
 {
-	// 左ボタンのドラッグ中であれば、マウスの移動量に応じて視点を移動する
-	if ( drag_mouse_l == 1 )
-	{
-		// マウスの縦移動に応じて距離を移動
-		// camera_distance += ( my - last_mouse_y ) * 0.2;
-		camera_distance += ( my - last_mouse_y ) * 20.0;
-		if ( camera_distance < 500.0 )
-			camera_distance = 500.0;
-	}
-	
-	// 右ボタンのドラッグ中であれば、マウスの移動量に応じて視点を回転する
-	if ( drag_mouse_r == 1 )
-	{
-		// マウスの横移動に応じてＹ軸を中心に回転
-		// camera_yaw -= ( mx - last_mouse_x ) * 1.0;
-		// if ( camera_yaw < 0.0 )
-		// 	camera_yaw += 360.0;
-		// else if ( camera_yaw > 360.0 )
-		// 	camera_yaw -= 360.0;
+    // 左ボタンのドラッグ中であれば、マウスの移動量に応じて視点を移動する
+    if ( drag_mouse_l == 1 )
+    {
+        // マウスの縦移動に応じて距離を移動
+        // camera_distance += ( my - last_mouse_y ) * 0.2;
+        camera_distance += ( my - last_mouse_y ) * 20.0;
+        if ( camera_distance < 500.0 )
+            camera_distance = 500.0;
+    }
 
-		// マウスの横移動に応じてZ軸を中心に回転
-		camera_roll -= ( mx - last_mouse_x ) * 1.0;
-		// if ( camera_roll < 0.0 )
-		// 	camera_roll += 360.0;
-		// else if ( camera_roll > 360.0 )
-		// 	camera_roll -= 360.0;
-		
-		// マウスの縦移動に応じてＸ軸を中心に回転
-		camera_pitch -= ( my - last_mouse_y ) * 1.0;
-		if ( camera_pitch < 0.0 )
-			camera_pitch = 0.0;
-		else if ( camera_pitch > 90.0 )
-			camera_pitch = 90.0;
-	}
+    // 右ボタンのドラッグ中であれば、マウスの移動量に応じて視点を回転する
+    if ( drag_mouse_r == 1 )
+    {
+        // マウスの横移動に応じてＹ軸を中心に回転
+        // camera_yaw -= ( mx - last_mouse_x ) * 1.0;
+        // if ( camera_yaw < 0.0 )
+        // 	camera_yaw += 360.0;
+        // else if ( camera_yaw > 360.0 )
+        // 	camera_yaw -= 360.0;
 
-	// 今回のマウス座標を記録
-	last_mouse_x = mx;
-	last_mouse_y = my;
+        // マウスの横移動に応じてZ軸を中心に回転
+        camera_roll -= ( mx - last_mouse_x ) * 1.0;
+        // if ( camera_roll < 0.0 )
+        // 	camera_roll += 360.0;
+        // else if ( camera_roll > 360.0 )
+        // 	camera_roll -= 360.0;
 
-	// 再描画の指示を出す（この後で再描画のコールバック関数が呼ばれる）
-	glutPostRedisplay();
+        // マウスの縦移動に応じてＸ軸を中心に回転
+        camera_pitch -= ( my - last_mouse_y ) * 1.0;
+        if ( camera_pitch < 0.0 )
+            camera_pitch = 0.0;
+        else if ( camera_pitch > 90.0 )
+            camera_pitch = 90.0;
+    }
+
+    // 今回のマウス座標を記録
+    last_mouse_x = mx;
+    last_mouse_y = my;
+
+    // 再描画の指示を出す（この後で再描画のコールバック関数が呼ばれる）
+    glutPostRedisplay();
 }
 
 void idle(void)
@@ -292,30 +292,30 @@ void idle(void)
 
 void  initEnvironment( void )
 {
-	// // 光源を作成する
-	// float  light0_position[] = { 10.0, 10.0, 10.0, 1.0 };
-	// float  light0_diffuse[] = { 0.8, 0.8, 0.8, 1.0 };
-	// float  light0_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-	// float  light0_ambient[] = { 0.1, 0.1, 0.1, 1.0 };
-	// glLightfv( GL_LIGHT0, GL_POSITION, light0_position );
-	// glLightfv( GL_LIGHT0, GL_DIFFUSE, light0_diffuse );
-	// glLightfv( GL_LIGHT0, GL_SPECULAR, light0_specular );
-	// glLightfv( GL_LIGHT0, GL_AMBIENT, light0_ambient );
-	// glEnable( GL_LIGHT0 );
+    // // 光源を作成する
+    // float  light0_position[] = { 10.0, 10.0, 10.0, 1.0 };
+    // float  light0_diffuse[] = { 0.8, 0.8, 0.8, 1.0 };
+    // float  light0_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+    // float  light0_ambient[] = { 0.1, 0.1, 0.1, 1.0 };
+    // glLightfv( GL_LIGHT0, GL_POSITION, light0_position );
+    // glLightfv( GL_LIGHT0, GL_DIFFUSE, light0_diffuse );
+    // glLightfv( GL_LIGHT0, GL_SPECULAR, light0_specular );
+    // glLightfv( GL_LIGHT0, GL_AMBIENT, light0_ambient );
+    // glEnable( GL_LIGHT0 );
 
-	// // 光源計算を有効にする
-	// glEnable( GL_LIGHTING );
+    // // 光源計算を有効にする
+    // glEnable( GL_LIGHTING );
 
-	// // 物体の色情報を有効にする
-	// glEnable( GL_COLOR_MATERIAL );
+    // // 物体の色情報を有効にする
+    // glEnable( GL_COLOR_MATERIAL );
 
-	// // Ｚテストを有効にする
-	// glEnable( GL_DEPTH_TEST );
+    // // Ｚテストを有効にする
+    // glEnable( GL_DEPTH_TEST );
 
-	// // 背面除去を有効にする
-	// glCullFace( GL_BACK );
-	// glEnable( GL_CULL_FACE );
+    // // 背面除去を有効にする
+    // glCullFace( GL_BACK );
+    // glEnable( GL_CULL_FACE );
 
-	// 背景色を設定
-	glClearColor(1.0, 1.0, 1.0, 0.0);
+    // 背景色を設定
+    glClearColor(1.0, 1.0, 1.0, 0.0);
 }

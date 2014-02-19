@@ -60,3 +60,14 @@ const double AREA_D_START_Y = AREA_S_START_Y + AREA_D_MARGIN;
 const double AREA_D_END_Y = AREA_S_END_Y - AREA_D_MARGIN;
 const double AREA_D_START_X = 0.0;
 const double AREA_D_END_X = AREA_S_END_X - AREA_D_MARGIN;
+
+// エリアC("C"onventional)の定義
+const double AREA_C_START_Y = -1000.0; //検出エリアの範囲の設定
+const double AREA_C_END_Y = 1000.0; //検出エリアの範囲の設定
+const double AREA_C_START_X = 0.0; //検出エリアの範囲の設定
+const double AREA_C_END_X = 1000.0; //検出エリアの範囲の設定
+const double AREA_C_START_Z = 0.0; //検出エリアの範囲の設定
+const double AREA_C_END_Z = 2000.0; //検出エリアの範囲の設定
+const int AREA_C_STEP_NUM_TH = 20; // エリアの中に一定数以上scanpointがあれば物体が存在するとみなす
+const int BUF_LENGTH_HAS_OBJECTS = 10; //バッファの長さ
+const int BUF_NUM_HAS_OBJECTS = 7; // バッファのうち物体が存在したフレームが一定数以上あればドアを開ける

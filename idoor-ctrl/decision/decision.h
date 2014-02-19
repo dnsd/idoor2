@@ -7,61 +7,40 @@
 
 using namespace std;
 
+class Area;
 class Tanzaku;
 struct Cell;
 class Step;
 class Lane;
 
-typedef struct{
-    char det; //UorD
-    double dist[STEP_NUM];
-    double x[STEP_NUM];
-    double y[STEP_NUM];
-    double z[STEP_NUM];
-}LS3D;
-
-typedef struct{
-    double a[BORDER_NUM_MAX];
-    double b[BORDER_NUM_MAX];
-    double p0x[TANZAKU_NUM_MAX];
-    double p0y[TANZAKU_NUM_MAX];
-    double wn[TANZAKU_NUM_MAX];//位置データ(tan_pos or tan_x)が1mのときの短冊の幅
-}TANZAKU_FAC;
-
-class Tanzaku
+class Area
 {
     public:
-        int frame_arrival[TANZAKU_NUM_MAX];//何フレーム後にドアを開けるべきか
-        int approach_cnt[TANZAKU_NUM_MAX]; //連続して観測すると増えていく
+        double sx1, sx2, sy1, sy2, sz1, sz2; // "s"etdata
+        int step_num_cnt_th;
+        int buf_num_cnt_th;
+        int buf_length_has_objects;
+        deque<int> hasObjects_buf;
 
-        int open_mode[TANZAKU_NUM_MAX]; //短冊ごとの判定結果
+        void defineCuboid(double x1, double x2, double y1, double y2, double z1, double z2);
+        bool hasObjects(Step& readdata);
+        int judgeOpen(Step& readdata);
+        void set_step_num_cnt_th(int parameter);
+        void set_buf_num_cnt_th(int parameter);
+        void set_buf_length_has_objects(int parameter);
+    Area(){
+        sx1 = 0.0;
+        sx2 = 1000.0;
+        sy1 = -1000.0;
+        sy2 = 1000.0;
+        sz1 = 0.0;
+        sz2 = 2000.0;
+        step_num_cnt_th = AREA_C_STEP_NUM_TH; // エリアの中に一定数以上scanpointがあれば物体が存在するとみなす
+        buf_num_cnt_th = BUF_NUM_HAS_OBJECTS; // バッファのうち物体が存在したフレームが一定数以上あればドアを開ける
+        buf_length_has_objects = BUF_LENGTH_HAS_OBJECTS; //バッファの長さ
+        hasObjects_buf.resize(buf_length_has_objects);
+    }
 
-        bool isInSurveillanceArea(int tan_num, int index);
-        bool isInInnerArea(int tan_num, int index);
-        bool isInDetectionArea(int tan_num, int index);
-        bool isCancel(Lane& lane, int tan_num);
-
-        vector< deque<double> > x;
-        vector< deque<double> > y;
-        vector< deque<double> > v;
-        vector< deque<double> > w;
-        vector< deque<double> > scan_time;
-
-        Tanzaku(){
-            x.resize(TANZAKU_NUM_MAX);
-            y.resize(TANZAKU_NUM_MAX);
-            v.resize(TANZAKU_NUM_MAX);
-            w.resize(TANZAKU_NUM_MAX);
-            scan_time.resize(TANZAKU_NUM_MAX);
-            for (int i = 0; i < TANZAKU_NUM_MAX; i++)
-            {
-                x[i].resize(BUFFER_LENGTH);
-                y[i].resize(BUFFER_LENGTH);
-                v[i].resize(BUFFER_LENGTH);
-                w[i].resize(BUFFER_LENGTH);
-                scan_time[i].resize(BUFFER_LENGTH);
-            }
-        }
 };
 
 struct Cell
@@ -71,6 +50,30 @@ struct Cell
         double sum_y[TAN_CELL_NUM_MAX][TANZAKU_NUM_MAX]; //セル内にあるステップのy座標値の合計
         double sum_steptime[TAN_CELL_NUM_MAX][TANZAKU_NUM_MAX]; //セル内にあるステップのスキャン時刻の総和
 };
+
+class Lane
+{
+    private:
+        int pending_cnt[LANE_NUM_MAX];
+    public:
+        bool isPending(int lane_num);
+        void upd_pending_cnt(Tanzaku& tanzaku);
+
+        Lane(){
+            for (int i = 0; i < LANE_NUM_MAX; i++)
+            {
+                pending_cnt[i] = 0;
+            }
+        }
+};
+
+typedef struct{
+    char det; //UorD
+    double dist[STEP_NUM];
+    double x[STEP_NUM];
+    double y[STEP_NUM];
+    double z[STEP_NUM];
+}LS3D;
 
 typedef struct{
     int order;
@@ -105,21 +108,50 @@ class Step
         }
 };
 
-class Lane
+class Tanzaku
 {
-    private:
-        int pending_cnt[LANE_NUM_MAX];
     public:
-        bool isPending(int lane_num);
-        void upd_pending_cnt(Tanzaku& tanzaku);
+        int frame_arrival[TANZAKU_NUM_MAX];//何フレーム後にドアを開けるべきか
+        int approach_cnt[TANZAKU_NUM_MAX]; //連続して観測すると増えていく
 
-        Lane(){
-            for (int i = 0; i < LANE_NUM_MAX; i++)
+        int open_mode[TANZAKU_NUM_MAX]; //短冊ごとの判定結果
+
+        bool isInSurveillanceArea(int tan_num, int index);
+        bool isInInnerArea(int tan_num, int index);
+        bool isInDetectionArea(int tan_num, int index);
+        bool isCancel(Lane& lane, int tan_num);
+        int judgeOpen(Lane& lane);
+
+        vector< deque<double> > x;
+        vector< deque<double> > y;
+        vector< deque<double> > v;
+        vector< deque<double> > w;
+        vector< deque<double> > scan_time;
+
+        Tanzaku(){
+            x.resize(TANZAKU_NUM_MAX);
+            y.resize(TANZAKU_NUM_MAX);
+            v.resize(TANZAKU_NUM_MAX);
+            w.resize(TANZAKU_NUM_MAX);
+            scan_time.resize(TANZAKU_NUM_MAX);
+            for (int i = 0; i < TANZAKU_NUM_MAX; i++)
             {
-                pending_cnt[i] = 0;
+                x[i].resize(BUFFER_LENGTH);
+                y[i].resize(BUFFER_LENGTH);
+                v[i].resize(BUFFER_LENGTH);
+                w[i].resize(BUFFER_LENGTH);
+                scan_time[i].resize(BUFFER_LENGTH);
             }
         }
 };
+
+typedef struct{
+    double a[BORDER_NUM_MAX];
+    double b[BORDER_NUM_MAX];
+    double p0x[TANZAKU_NUM_MAX];
+    double p0y[TANZAKU_NUM_MAX];
+    double wn[TANZAKU_NUM_MAX];//位置データ(tan_pos or tan_x)が1mのときの短冊の幅
+}TANZAKU_FAC;
 
 //-関数のプロトタイプ宣言-//
 //mystd.cpp
@@ -140,7 +172,8 @@ void read_tan_fac(TANZAKU_FAC& fac);
 void read_tan_wn(TANZAKU_FAC& fac);
 void write_open_log(Step& sd, Tanzaku& tanzaku, int open_mode, double scantime);
 //open.cpp
-void judge_open_mode(Tanzaku& tan, Lane& lane, bool B_flag, int& open_mode);
+// void judge_open_mode(Tanzaku& tan, Lane& lane, bool B_flag, int& open_mode);
+int judge_open_mode(int vote1, int vote2);
 
 //-タイムゾーン設定用-//
 extern double steptime[STEP_NUM];

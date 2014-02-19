@@ -57,11 +57,18 @@ int main (int argc, char **argv)
     Cell cell;
     Step ped;
     Lane lane;
+    Area areaC;
 
     //-初期設定-//
     initialize_open_log();
     read_tan_fac(fac);
     read_tan_wn(fac);
+
+    //-エリアCの初期化-//
+    areaC.defineCuboid(AREA_C_START_X, AREA_C_END_X, AREA_C_START_Y, AREA_C_END_Y, AREA_C_START_Z, AREA_C_END_Z);
+    areaC.set_step_num_cnt_th(AREA_C_STEP_NUM_TH);
+    areaC.set_buf_num_cnt_th(BUF_NUM_HAS_OBJECTS);
+    areaC.set_buf_length_has_objects(BUF_LENGTH_HAS_OBJECTS);
 
     // ステップタイムの設定
     for (int i = 1; i <= STEP_NUM; i++)
@@ -100,8 +107,9 @@ int main (int argc, char **argv)
             lane.upd_pending_cnt(tanzaku);
             
             // 最終的な開き命令
-            judge_open_mode(tanzaku, lane, B_flag, open_mode_door);
-            DORDER.data.order = open_mode_door;
+            // judge_open_mode(tanzaku, lane, B_flag, open_mode_door);
+            // DORDER.data.order = open_mode_door;
+            DORDER.data.order = judge_open_mode(areaC.judgeOpen(ped), tanzaku.judgeOpen(lane));
 
             // SSM書き込み
             DORDER.write();
