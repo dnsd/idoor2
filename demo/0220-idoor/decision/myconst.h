@@ -49,7 +49,7 @@ const int PENDING_CNT_MAX = 60; // pending zoneが消えるまでの時間（フ
 const int PENDING_ZONE_WIDTH = 5; // 片側
 
 // エリアS("S"urveilance)の定義
-const double AREA_S_START_Y = -800.0;
+const double AREA_S_START_Y = -1800.0;
 const double AREA_S_END_Y = 1800.0;
 const double AREA_S_START_X = 0.0;
 const double AREA_S_END_X = 3800.0;
