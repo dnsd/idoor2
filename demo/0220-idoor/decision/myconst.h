@@ -13,7 +13,7 @@ const double STOP_TH = 100.0; // 10Hz //単位はmm
 const int TAN_CELL_NUM_MAX = 30;
 const double TAN_CELL_RES = 100.0;
 const int TANZAKU_NUM_MAX = 30; //短冊の個数
-const int FRAME_OBSERVE = 5;
+const int FRAME_OBSERVE = 7;
 
 // バッファ関連
 const int BUFFER_LENGTH = 6; //最小二乗法のバッファ範囲
@@ -45,7 +45,7 @@ const double DOOR_W_TH = 800.0; //一人or複数人の判定用
 //lane
 const double LANE_W = 100.0;
 const int LANE_NUM_MAX = 50;
-const int PENDING_CNT_MAX = 60; // pending zoneが消えるまでの時間（フレーム数）
+const int PENDING_CNT_MAX = 80; // pending zoneが消えるまでの時間（フレーム数）
 const int PENDING_ZONE_WIDTH = 5; // 片側
 
 // エリアS("S"urveilance)の定義
