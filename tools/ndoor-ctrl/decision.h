@@ -30,9 +30,13 @@ class Area
         int buf_length_has_objects;
         deque<int> hasObjects_buf;
 
+        vector< deque<double> > area_th_min; // エリアの境界をビームの距離値で表現
+        vector< deque<double> > area_th_min; // エリアの境界をビームの距離値で表現
+
         void defineCuboid(double x1, double x2, double y1, double y2, double z1, double z2);
         bool hasObjects(Step& readdata);
         int judgeOpen(Step& readdata);
+        void setAreaTh();
         void set_step_num_cnt_th(int parameter);
         void set_buf_num_cnt_th(int parameter);
         void set_buf_length_has_objects(int parameter);
