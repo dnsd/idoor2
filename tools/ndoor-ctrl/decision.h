@@ -7,19 +7,34 @@
 
 using namespace std;
 
+struct AABB;
+struct LS3D;
+struct VEC3D;
+
 class Area;
 class Tanzaku;
 class Cell;
 class Step;
 class Lane;
 
-typedef struct{
+struct AABB{
+    VEC3D min;
+    VEC3D max;
+};
+
+struct LS3D{
     char det; //UorD
     double dist[STEP_NUM];
     double x[STEP_NUM];
     double y[STEP_NUM];
     double z[STEP_NUM];
-}LS3D;
+};
+
+struct VEC3D{
+    double x;
+    double y;
+    double z;
+};
 
 class Area
 {
@@ -31,7 +46,7 @@ class Area
         deque<int> hasObjects_buf;
 
         vector< deque<double> > area_th_min; // エリアの境界をビームの距離値で表現
-        vector< deque<double> > area_th_min; // エリアの境界をビームの距離値で表現
+        vector< deque<double> > area_th_max; // エリアの境界をビームの距離値で表現
 
         void defineCuboid(double x1, double x2, double y1, double y2, double z1, double z2);
         bool hasObjects(Step& readdata);

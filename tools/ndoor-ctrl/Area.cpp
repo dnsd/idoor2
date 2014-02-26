@@ -75,6 +75,29 @@ int Area::judgeOpen(Step& rd)
     }
 }
 
+void Area::setAreaTh(AABB aabb){
+	// AABBと直線の交差判定
+	for (int i = 0; i < STEP_NUM; ++i)
+	{
+		double col_pos1 = 0.0;
+		double col_pos2 = 0.0;
+
+
+		if (col_pos1 <= col_pos2)
+		{
+			area_th_min.pop_front();
+			area_th_max.pop_front();
+			area_th_min.push_back(col_pos1);
+			area_th_min.push_back(col_pos2);
+		}else{
+			area_th_min.pop_front();
+			area_th_max.pop_front();
+			area_th_min.push_back(col_pos2);
+			area_th_min.push_back(col_pos1);
+		}
+	}
+}
+
 void Area::set_step_num_cnt_th(int parameter)
 {
 	step_num_cnt_th = parameter;
