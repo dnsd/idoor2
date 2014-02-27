@@ -23,12 +23,14 @@ SSMApi<ORDER> DORDER("ORDER", 30);
 
 using namespace std;
 
-main()
+int main()
 {
     int fd,c, res;
     struct termios oldtio,newtio;
     char buf[255];
     char buf2[255];
+
+    cout.precision(16);
 
     // ssmのイニシャライズ
     initSSM();
@@ -70,6 +72,7 @@ main()
 
         if (DORDER.readNew() == true)
         {
+            cout << get_time() << endl;
             cout << DORDER.data.order << endl;
             if(DORDER.data.order >= 1)
             {

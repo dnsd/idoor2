@@ -33,5 +33,5 @@ simu:simu.cpp
 cal_timezone_info:cal_timezone_info.cpp
 	g++ -o cal_timezone_info cal_timezone_info.cpp -lglut -lGLU -lGL -lm -lssm
 door_ctrl:door_ctrl.cpp
-	g++ -o door_ctrl door_ctrl.cpp mystd.cpp -lm -lssm
+	g++ -o door_ctrl door_ctrl.cpp -lm -lssm
 	
