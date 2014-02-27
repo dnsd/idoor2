@@ -1,6 +1,5 @@
 #include <iostream>
 #include <ssm.hpp>
-#include <iomanip>
 #include <cmath>
 #include <fstream>
 #include <sys/time.h>
@@ -31,7 +30,7 @@ double time_2; //時間計測用
 double time_3; //時間計測用
 
 //-SSM-//
-SSMApi<LS3D> SCAN_DATA("LS3D", 0);
+// SSMApi<LS3D> SCAN_DATA("LS3D", 0);
 SSMApi<LS3D> OBJECT("OBJECT", 1);
 SSMApi<ORDER> DORDER("ORDER", 30);
 
@@ -39,7 +38,7 @@ int main (int argc, char **argv)
 {
     //-SSM-//
     initSSM();
-    SCAN_DATA.open(SSM_READ);
+    // SCAN_DATA.open(SSM_READ);
     OBJECT.open(SSM_READ);
     DORDER.create(5.0, 1.0);
 
@@ -70,7 +69,7 @@ int main (int argc, char **argv)
     {
         if (OBJECT.readNew())//if(OBJECTreadNew)
         {
-            SCAN_DATA.readNew(); //scantimeの読み込み用
+            // SCAN_DATA.readNew(); //scantimeの読み込み用
             time_1 = get_time();
 
             //-読み込みデータのセット-//
@@ -98,7 +97,7 @@ int main (int argc, char **argv)
         } 
     }
     //-SSMクローズ-//
-    SCAN_DATA.close();
+    // SCAN_DATA.close();
     OBJECT.close();
     endSSM();
     return 0;

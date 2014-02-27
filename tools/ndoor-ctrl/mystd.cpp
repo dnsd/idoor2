@@ -26,6 +26,7 @@ void CountDown(int count)
 
 double dist_2p(double p1_x, double p1_y, double p2_x, double p2_y)
 {
+    // 2点間の距離を返す（2次元）
     double dist = 0.0;
 
     dist = sqrt( (p2_x - p1_x)*(p2_x - p1_x) + (p2_y - p1_y)*(p2_y - p1_y) );
@@ -35,6 +36,7 @@ double dist_2p(double p1_x, double p1_y, double p2_x, double p2_y)
 
 double dist_2p3D(double p1_x, double p1_y, double p1_z, double p2_x, double p2_y, double p2_z)
 {
+    // 2点間の距離を返す（3次元）
     double dist = 0.0;
 
     dist = sqrt( (p2_x - p1_x)*(p2_x - p1_x) + (p2_y - p1_y)*(p2_y - p1_y) + (p2_z - p1_z)*(p2_z - p1_z) );

@@ -60,7 +60,7 @@ class Area
         void set_buf_length(int parameter); // バッファの長さ
         void set_buf_cnt_th(int parameter); // 物体が存在するフレーム数のしきい値
         
-    // private:
+    // private: // そのうちprivateとpublicを分ける
         int step_cnt_th;
         int buf_cnt_th;
         int buf_length;
@@ -97,12 +97,12 @@ class Area
 
 };
 
-class AreaAABB : public Area
+class AreaAABB : public Area // 軸並行ボックス      
 {
     public:
         void calAreaTh(BEAMANGLE angle);
         void defineAABB(double min0, double min1, double min2, double max0, double max1, double max2);
-    // private:
+    // private:　// そのうちprivateとpublicを分ける
         double aabb_min[3]; // AABBの定義
         double aabb_max[3]; // AABBの定義
     AreaAABB(){
@@ -133,7 +133,11 @@ class AreaAABB : public Area
         sensor_pos[1] = ORG_Y;
         sensor_pos[2] = ORG_Z;
     }
+};
 
+class AreaCylinder : public Area　// 円筒形
+{
+    // 円筒形のエリアを実装する
 };
 
 typedef struct{
@@ -173,16 +177,16 @@ class Step
 //mystd.cpp
 double get_time(void);
 double dist_2p3D(double p1_x, double p1_y, double p1_z, double p2_x, double p2_y, double p2_z);
-//log_ctr.cpp
-void initialize_open_log();
-void write_open_log(char data_det, double data_x[], double data_y[], double data_z[], int open_mode, int open_mode_tan[], vector< deque<double> >& tan_x_buf, vector< deque<double> >& v, int tan_approach_cnt[], double scantime);
 //open.cpp
 int judge_open_mode(int vote1);
+int judge_open_mode(int vote1, int vote2);
+int judge_open_mode(int vote1, int vote2, int vote3);
+int judge_open_mode(int vote1, int vote2, int vote3, int vote4);
 // ReadAngle.cpp
 double beta2angle(long angle);
 void calc_xyz(double angle_x, double angle_y, long dist, double& x, double& y, double& z);
 void read_beta_data(BEAMANGLE& angle);
 
 //-開閉判定用-//
-extern int open_mode_door;
+// extern int open_mode_door;
 

@@ -16,6 +16,7 @@ using namespace std;
 
 bool Area::hasObjects(Step& rd) // "r"ead"d"ata
 {
+    // エリアに物体が存在するか？
     int step_cnt = 0;
     if (rd.det[CUR_INDEX] == 'U')
     {
@@ -51,6 +52,7 @@ bool Area::hasObjects(Step& rd) // "r"ead"d"ata
 
 int Area::judgeOpen(Step& rd)
 {
+    // ドアを開けるべきか？
     if(hasObjects(rd) == true)
     {
         hasObjects_buf.pop_front();

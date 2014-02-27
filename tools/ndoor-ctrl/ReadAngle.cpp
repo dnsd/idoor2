@@ -6,6 +6,7 @@
 
 double beta2angle(long angle)
 {
+    // センサから取得した角度データを使える形に加工する
     double alpha, beta;
     beta = (double)angle;
     alpha = ((2*beta)/(pow(2, 24)-1)) - 1; // 北陽独自の変換式
@@ -14,6 +15,7 @@ double beta2angle(long angle)
 
 void calc_xyz(double angle_x, double angle_y, long dist, double& x, double& y, double& z)
 {
+    // ビームの距離値と角度からスキャン点の座標を算出
     double tx, ty, tz;
     tx = dist * cos(angle_x) * cos(angle_y);
     ty = dist * sin(angle_x) * cos(angle_y);
@@ -25,6 +27,7 @@ void calc_xyz(double angle_x, double angle_y, long dist, double& x, double& y, d
 
 void read_beta_data(BEAMANGLE& angle)
 {
+    // ビームの角度データの読み込み
 	FILE *fp;
 	fp = fopen("beta_data", "r");
 

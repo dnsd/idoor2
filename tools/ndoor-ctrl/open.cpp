@@ -21,7 +21,41 @@ int judge_open_mode(int vote1)
 {
     // 将来的には、voteの数に動的に対応できるようにする
 
-    int open_mode = vote1;
-    return open_mode;
+    return vote1;
 }
 
+int judge_open_mode(int vote1, int vote2)
+{
+    // 将来的には、voteの数に動的に対応できるようにする
+    if (vote1 >= vote2)
+    {
+        return vote1;
+    }else{
+        return vote2;
+    }
+}
+
+int judge_open_mode(int vote1, int vote2, int vote3)
+{
+	// 将来には、voteの数に動的に対応できるようにする
+	vector<int> votes;
+	votes.push_back(vote1);
+	votes.push_back(vote2);
+	votes.push_back(vote3);
+
+	sort(votes.begin(), votes.end());
+	return votes[0];
+}
+
+int judge_open_mode(int vote1, int vote2, int vote3, int vote4)
+{
+	// 将来には、voteの数に動的に対応できるようにする
+	vector<int> votes;
+	votes.push_back(vote1);
+	votes.push_back(vote2);
+	votes.push_back(vote3);
+	votes.push_back(vote4);
+
+	sort(votes.begin(), votes.end());
+	return votes[0];
+}

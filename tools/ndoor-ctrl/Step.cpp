@@ -1,5 +1,4 @@
 #include <iostream>
-// #include <iomanip>
 #include <fstream>
 #include <sys/time.h>
 #include <ssm.hpp>
@@ -36,6 +35,7 @@ void Step::set_data(char& read_data_det, double read_data_dist[], double read_da
 
 bool Step::isClose(int step_num)
 {
+    // 近づいているか？
     double dist_diff = 0.0;
     dist_diff = dist[step_num][PREPRE_INDEX] - dist[step_num][CUR_INDEX];
     if (dist_diff > CLOSE_TH)
@@ -48,6 +48,7 @@ bool Step::isClose(int step_num)
 
 bool Step::isStop(int step_num)
 {
+    // 止まっているか？
     double dist_diff = 0.0;
     dist_diff = dist[step_num][PREPRE_INDEX] - dist[step_num][CUR_INDEX];
     if (fabs(dist_diff) < STOP_TH)
