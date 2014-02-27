@@ -128,7 +128,7 @@ int main (int argc, char **argv)
             // ofs << endl;
 
             // open_log出力
-            write_open_log(ped, tanzaku, open_mode_door, SCAN_DATA.time);
+            // write_open_log(ped, tanzaku, open_mode_door, SCAN_DATA.time);
 
             time_2 = get_time();
             usleep(FREQ*1000000 - (time_2 - time_1)*1000000);

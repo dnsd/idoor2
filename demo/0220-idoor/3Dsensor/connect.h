@@ -14,10 +14,10 @@ const int PRE_INDEX = BUFFER_LENGTH-2;
 const int PREPRE_INDEX = BUFFER_LENGTH-3;
 
 // 監視エリア設定(AREA_S)
-const double AREA_START_Y = -1800.0;
-const double AREA_END_Y = 1800.0;
+const double AREA_START_Y = -1500.0;
+const double AREA_END_Y = 1500.0;
 const double AREA_START_X = 0.0;
-const double AREA_END_X = 4000.0;
+const double AREA_END_X = 3800.0;
 const double AREA_START_Z = -300.0;
 const double AREA_END_Z = 2600.0;
 const double SURVEILLANCE_R = 5000.0;

@@ -16,7 +16,7 @@ const int TANZAKU_NUM_MAX = 30; //短冊の個数
 const int FRAME_OBSERVE = 7;
 
 // バッファ関連
-const int BUFFER_LENGTH = 6; //最小二乗法のバッファ範囲
+const int BUFFER_LENGTH = 10; //最小二乗法のバッファ範囲
 const int CUR_INDEX = BUFFER_LENGTH - 1;
 const int PRE_INDEX = BUFFER_LENGTH - 2;
 const int PREPRE_INDEX = BUFFER_LENGTH - 3;
@@ -45,12 +45,12 @@ const double DOOR_W_TH = 800.0; //一人or複数人の判定用
 //lane
 const double LANE_W = 100.0;
 const int LANE_NUM_MAX = 50;
-const int PENDING_CNT_MAX = 80; // pending zoneが消えるまでの時間（フレーム数）
+const int PENDING_CNT_MAX = 60; // pending zoneが消えるまでの時間（フレーム数）
 const int PENDING_ZONE_WIDTH = 5; // 片側
 
 // エリアS("S"urveilance)の定義
-const double AREA_S_START_Y = -1800.0;
-const double AREA_S_END_Y = 1800.0;
+const double AREA_S_START_Y = -1500.0;
+const double AREA_S_END_Y = 1500.0;
 const double AREA_S_START_X = 0.0;
 const double AREA_S_END_X = 3800.0;
 
