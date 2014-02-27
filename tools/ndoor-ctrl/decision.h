@@ -9,6 +9,7 @@ using namespace std;
 
 struct AABB;
 struct LS3D;
+struct POINT3D;
 struct VEC3D;
 
 class Area;
@@ -18,8 +19,16 @@ class Step;
 class Lane;
 
 struct AABB{
-    VEC3D min;
-    VEC3D max;
+    int id;
+    double min[3];
+    double max[3];
+};
+
+struct BEAMANGLE{
+    double ux[20][136];
+    double uy[20][136];
+    double dx[20][136];
+    double dy[20][136];
 };
 
 struct LS3D{
@@ -28,6 +37,12 @@ struct LS3D{
     double x[STEP_NUM];
     double y[STEP_NUM];
     double z[STEP_NUM];
+};
+
+struct POINT3D{
+    double x;
+    double y;
+    double z;
 };
 
 struct VEC3D{
@@ -39,17 +54,19 @@ struct VEC3D{
 class Area
 {
     public:
-        double sx1, sx2, sy1, sy2, sz1, sz2; // "s"etdata
+        // double sx1, sx2, sy1, sy2, sz1, sz2; // "s"etdata
         int step_num_cnt_th;
         int buf_num_cnt_th;
         int buf_length_has_objects;
         deque<int> hasObjects_buf;
 
-        vector< deque<double> > area_th_min; // エリアの境界をビームの距離値で表現
-        vector< deque<double> > area_th_max; // エリアの境界をビームの距離値で表現
+        vector< deque<double> > area_th_min_U; // エリアの境界をビームの距離値で表現
+        vector< deque<double> > area_th_max_U; // エリアの境界をビームの距離値で表現
+        vector< deque<double> > area_th_min_D; // エリアの境界をビームの距離値で表現
+        vector< deque<double> > area_th_max_D; // エリアの境界をビームの距離値で表現
 
         void defineCuboid(double x1, double x2, double y1, double y2, double z1, double z2);
-        bool hasObjects(Step& readdata);
+        // bool hasObjects(Step& readdata);
         int judgeOpen(Step& readdata);
         void setAreaTh();
         void set_step_num_cnt_th(int parameter);
@@ -66,6 +83,18 @@ class Area
         buf_num_cnt_th = 10; // バッファのうち物体が存在したフレームが一定数以上あればドアを開ける
         buf_length_has_objects = 15; //バッファの長さ
         hasObjects_buf.resize(buf_length_has_objects);
+
+        area_th_min_U.resize(STEP_NUM);
+        area_th_max_U.resize(STEP_NUM);
+        area_th_min_D.resize(STEP_NUM);
+        area_th_max_D.resize(STEP_NUM);
+        for (int i = 0; i < STEP_NUM; ++i)
+        {
+            area_th_min_U[i].resize(OBJECTNUM);
+            area_th_max_U[i].resize(OBJECTNUM);
+            area_th_min_D[i].resize(OBJECTNUM);
+            area_th_max_D[i].resize(OBJECTNUM);
+        }
     }
 
 };
