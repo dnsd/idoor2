@@ -3,7 +3,6 @@
 #include <iomanip>
 #include <cmath>
 #include <fstream>
-#include <time.h>
 #include <sys/time.h>
 #include "decision.h"
 
@@ -46,14 +45,21 @@ int main (int argc, char **argv)
 
     //-クラス-//
     Step ped;
-    Area area1;
+    BEAMANGLE beam_angle;
 
     //-初期設定-//
-    area1.defineCuboid(AREA_START_X, AREA_END_X, AREA_START_Y, AREA_END_Y, AREA_START_Z, AREA_END_Z);
-    area1.set_step_num_cnt_th(STEP_NUM_CNT_TH);
-    area1.set_buf_num_cnt_th(BUF_NUM_CNT_TH);
-    area1.set_buf_length_has_objects(BUF_LENGTH_HAS_OBJECTS);
+    read_beta_data(beam_angle);
 
+    AABB aabb1;
+    aabb1.min[0] = 0.0;
+    aabb1.min[1] = -1000.0;
+    aabb1.min[2] = 0.0;
+    aabb1.max[0] = 1000.0;
+    aabb1.max[1] = 1000.0;
+    aabb1.max[2] = 3000.0;
+    AreaAABB area1(aabb1, 20, 10, 15);
+    area1.calAreaTh(beam_angle);
+ 
     // 出力の設定
     ofs.open(FILENAME);
     ofs.precision(16);

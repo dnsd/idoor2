@@ -19,7 +19,6 @@ class Step;
 class Lane;
 
 struct AABB{
-    int id;
     double min[3];
     double max[3];
 };
@@ -54,47 +53,85 @@ struct VEC3D{
 class Area
 {
     public:
-        // double sx1, sx2, sy1, sy2, sz1, sz2; // "s"etdata
-        int step_num_cnt_th;
-        int buf_num_cnt_th;
-        int buf_length_has_objects;
-        deque<int> hasObjects_buf;
-
-        vector< deque<double> > area_th_min_U; // エリアの境界をビームの距離値で表現
-        vector< deque<double> > area_th_max_U; // エリアの境界をビームの距離値で表現
-        vector< deque<double> > area_th_min_D; // エリアの境界をビームの距離値で表現
-        vector< deque<double> > area_th_max_D; // エリアの境界をビームの距離値で表現
-
-        void defineCuboid(double x1, double x2, double y1, double y2, double z1, double z2);
-        // bool hasObjects(Step& readdata);
+        bool hasObjects(Step& readdata);
         int judgeOpen(Step& readdata);
-        void setAreaTh();
-        void set_step_num_cnt_th(int parameter);
-        void set_buf_num_cnt_th(int parameter);
-        void set_buf_length_has_objects(int parameter);
-    Area(){
-        sx1 = 0.0;
-        sx2 = 1000.0;
-        sy1 = -1000.0;
-        sy2 = 1000.0;
-        sz1 = 0.0;
-        sz2 = 2000.0;
-        step_num_cnt_th = 20; // エリアの中に一定数以上scanpointがあれば物体が存在するとみなす
-        buf_num_cnt_th = 10; // バッファのうち物体が存在したフレームが一定数以上あればドアを開ける
-        buf_length_has_objects = 15; //バッファの長さ
-        hasObjects_buf.resize(buf_length_has_objects);
 
+        void set_step_cnt_th(int parameter); // これ以上スキャン点があれば物体が存在するとみなす
+        void set_buf_length(int parameter); // バッファの長さ
+        void set_buf_cnt_th(int parameter); // 物体が存在するフレーム数のしきい値
+        
+    // private:
+        int step_cnt_th;
+        int buf_cnt_th;
+        int buf_length;
+
+        double sensor_pos[3]; // センサーの位置
+        double beam_range[STEP_NUM][3];
+
+        deque<int> hasObjects_buf;
+        vector<double> area_th_min_U; // エリアの境界をビームの距離値で表現
+        vector<double> area_th_max_U; // エリアの境界をビームの距離値で表現
+        vector<double> area_th_min_D; // エリアの境界をビームの距離値で表現
+        vector<double> area_th_max_D; // エリアの境界をビームの距離値で表現
+
+    Area(){
+        step_cnt_th = 20; // エリアの中に一定数以上scanpointがあれば物体が存在するとみなす
+        buf_cnt_th = 10; // バッファのうち物体が存在したフレームが一定数以上あればドアを開ける
+        buf_length = 15; //バッファの長さ
+        hasObjects_buf.resize(buf_length);
         area_th_min_U.resize(STEP_NUM);
         area_th_max_U.resize(STEP_NUM);
         area_th_min_D.resize(STEP_NUM);
         area_th_max_D.resize(STEP_NUM);
-        for (int i = 0; i < STEP_NUM; ++i)
-        {
-            area_th_min_U[i].resize(OBJECTNUM);
-            area_th_max_U[i].resize(OBJECTNUM);
-            area_th_min_D[i].resize(OBJECTNUM);
-            area_th_max_D[i].resize(OBJECTNUM);
-        }
+    }
+    Area(int para1, int para2, int para3){
+        step_cnt_th = para1; // エリアの中に一定数以上scanpointがあれば物体が存在するとみなす
+        buf_cnt_th = para2; // バッファのうち物体が存在したフレームが一定数以上あればドアを開ける
+        buf_length = para3; //バッファの長さ
+        hasObjects_buf.resize(buf_length);
+        area_th_min_U.resize(STEP_NUM);
+        area_th_max_U.resize(STEP_NUM);
+        area_th_min_D.resize(STEP_NUM);
+        area_th_max_D.resize(STEP_NUM);
+    }
+
+};
+
+class AreaAABB : public Area
+{
+    public:
+        void calAreaTh(BEAMANGLE angle);
+        void defineAABB(double min0, double min1, double min2, double max0, double max1, double max2);
+    // private:
+        double aabb_min[3]; // AABBの定義
+        double aabb_max[3]; // AABBの定義
+    AreaAABB(){
+        aabb_min[0] = DEFAULT_AABB_MIN0;
+        aabb_min[1] = DEFAULT_AABB_MIN1;
+        aabb_min[2] = DEFAULT_AABB_MIN2;
+        aabb_max[0] = DEFAULT_AABB_MAX0;
+        aabb_max[1] = DEFAULT_AABB_MAX1;
+        aabb_max[2] = DEFAULT_AABB_MAX2;
+
+        sensor_pos[0] = ORG_X;
+        sensor_pos[1] = ORG_Y;
+        sensor_pos[2] = ORG_Z;
+    }
+    AreaAABB(AABB aabb, double para1, double para2, double para3){
+        aabb_min[0] = aabb.min[0];
+        aabb_min[1] = aabb.min[1];
+        aabb_min[2] = aabb.min[2];
+        aabb_max[0] = aabb.max[0];
+        aabb_max[1] = aabb.max[1];
+        aabb_max[2] = aabb.max[2];
+
+        set_step_cnt_th(para1);
+        set_buf_cnt_th(para2);
+        set_buf_length(para3);
+
+        sensor_pos[0] = ORG_X;
+        sensor_pos[1] = ORG_Y;
+        sensor_pos[2] = ORG_Z;
     }
 
 };
@@ -135,12 +172,16 @@ class Step
 //-関数のプロトタイプ宣言-//
 //mystd.cpp
 double get_time(void);
+double dist_2p3D(double p1_x, double p1_y, double p1_z, double p2_x, double p2_y, double p2_z);
 //log_ctr.cpp
 void initialize_open_log();
 void write_open_log(char data_det, double data_x[], double data_y[], double data_z[], int open_mode, int open_mode_tan[], vector< deque<double> >& tan_x_buf, vector< deque<double> >& v, int tan_approach_cnt[], double scantime);
 //open.cpp
 int judge_open_mode(int vote1);
-
+// ReadAngle.cpp
+double beta2angle(long angle);
+void calc_xyz(double angle_x, double angle_y, long dist, double& x, double& y, double& z);
+void read_beta_data(BEAMANGLE& angle);
 
 //-開閉判定用-//
 extern int open_mode_door;

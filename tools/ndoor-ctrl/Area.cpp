@@ -1,5 +1,4 @@
 #include <iostream>
-// #include <iomanip>
 #include <fstream>
 #include <sys/time.h>
 #include <ssm.hpp>
@@ -13,56 +12,39 @@
 
 using namespace std;
 
-void Area::defineCuboid(double x1, double x2, double y1, double y2, double z1, double z2)
-{
-	sx1 = x1;
-	sx2 = x2;
-	sy1 = y1;
-	sy2 = y2;
-	sz1 = z1;
-	sz2 = z2;
-}
-
-// bool Area::hasObjects(Step& rd) // "r"ead"d"ata
-// {
-// 	int step_num_cnt = 0;
-// 	for (int i = 0; i < STEP_NUM; i++)
-// 	{
-// 		if (rd.dist[i][CUR_INDEX] != 0.0
-//                         && sx1 <= rd.x[i][CUR_INDEX] && rd.x[i][CUR_INDEX] <= sx2
-// 			&& sy1 <= rd.y[i][CUR_INDEX] && rd.y[i][CUR_INDEX] <= sy2
-// 			&& sz1 <= rd.z[i][CUR_INDEX] && rd.z[i][CUR_INDEX] <= sz2)
-// 		{
-// 			step_num_cnt++;
-// 		}
-// 	}
-
-// 	if (step_num_cnt >= step_num_cnt_th)
-// 	{
-// 		return true;
-// 	}else{
-// 		return false;
-// 	}
-// }
+//-Area-//
 
 bool Area::hasObjects(Step& rd) // "r"ead"d"ata
 {
-	int step_num_cnt = 0;
-	double th_min[3] = {0.0, 0.0, 0.0};
-	double th_max[3] = {0.0, 0.0, 0.0};
-
-	if (rd.det = 'U')
+	int step_cnt = 0;
+	if (rd.det[CUR_INDEX] == 'U')
 	{
-		for (int i = 0; i < 3; ++i)
+		for (int i = 0; i < STEP_NUM; ++i)
 		{
+			if (rd.dist[i][CUR_INDEX] != 0.0
+				&& area_th_min_U[i] <= rd.dist[i][CUR_INDEX]
+				&& rd.dist[i][CUR_INDEX] <= area_th_max_U[i])
+			{
+				step_cnt++;
+			}
+		}
+	}else if (rd.det[CUR_INDEX] == 'D')
+	{
+		for (int i = 0; i < STEP_NUM; ++i)
+		{
+			if (rd.dist[i][CUR_INDEX] != 0.0
+				&& area_th_min_D[i] <= rd.dist[i][CUR_INDEX]
+				&& rd.dist[i][CUR_INDEX] <= area_th_max_D[i])
+			{
+				step_cnt++;
+			}
 		}
 	}
-	for (int i = 0; i < STEP_NUM; ++i)
+	if (step_cnt >= step_cnt_th)
 	{
-		if ()
-		{
-			step_num_cnt++;
-		}
+		return true;
+	}else{
+		return false;
 	}
 }
 
@@ -86,7 +68,7 @@ int Area::judgeOpen(Step& rd)
         }
     }
 
-    if (buf_num_cnt >= buf_num_cnt_th)
+    if (buf_num_cnt >= buf_cnt_th)
     {
         cout << "buf_num_cnt =" << buf_num_cnt << endl;
         return 4; // 高速全開
@@ -96,16 +78,38 @@ int Area::judgeOpen(Step& rd)
     }
 }
 
-void Area::setAreaTh(AABB aabb, BEAMANGLE angle){
+void Area::set_step_cnt_th(int parameter)
+{
+	step_cnt_th = parameter;
+}
+
+void Area::set_buf_cnt_th(int parameter)
+{
+	buf_cnt_th = parameter;
+}
+
+void Area::set_buf_length(int parameter)
+{
+	buf_length = parameter;
+	hasObjects_buf.resize(buf_length);
+}
+
+//-AreaAABB-//
+void AreaAABB::calAreaTh(BEAMANGLE angle){
 	// AABBと直線の交差判定
 	double sensor_pos[3] = {ORG_X, ORG_Y, ORG_Z}; // センサの取り付け位置
 
+	for (int i = 0; i < 20; ++i)
+	{
+		for (int j = 0; j < 136; ++j)
+		{
+			calc_xyz(angle.ux[i][j], angle.uy[i][j], SENSOR_RANGE, beam_range[136*i + j][0], beam_range[136*i + j][1], beam_range[136*i + j][2]);
+			calc_xyz(angle.dx[i][j], angle.dy[i][j], SENSOR_RANGE, beam_range[136*i + j][0], beam_range[136*i + j][1], beam_range[136*i + j][2]);
+		}
+	}
 	// U
 	for (int i = 0; i < STEP_NUM; ++i)
 	{
-		double beam_range[3]; // センサの観測
-		calc_xyz(angle.ux, angle.uy, SENSOR_RANGE, beam_range[0], beam_range[1], beam_range[2]);
-
 		double tmin = 0.0;
 		double tmax = SENSOR_RANGE;
 		double cp_min[3] = {0.0, 0.0, 0.0};
@@ -113,9 +117,9 @@ void Area::setAreaTh(AABB aabb, BEAMANGLE angle){
 
 		for (int j = 0; j < 3; ++j)
 		{
-			float ood = 1.0 / beam_range[j];
-			float t1 = (aabb.min[j] - sensor_pos[j]) * ood;
-			float t2 = (aabb.max[j] - sensor_pos[j]) * ood;
+			float ood = 1.0 / beam_range[i][j];
+			float t1 = (aabb_min[j] - sensor_pos[j]) * ood;
+			float t2 = (aabb_max[j] - sensor_pos[j]) * ood;
 			if (t1 > t2) swap(t1, t2);
 			if (t1 > tmin) tmin = t1;
             if (t2 > tmax) tmax = t2;
@@ -123,19 +127,16 @@ void Area::setAreaTh(AABB aabb, BEAMANGLE angle){
 		}
 		for (int j = 0; j < 3; ++j)
 		{
-			cp_min[j] = sensor_pos[j] + beam_range[j] * tmin; // "c"ollision "p"oint
-			cp_max[j] = sensor_pos[j] + beam_range[j] * tmax; // "c"ollision "p"oint
+			cp_min[j] = sensor_pos[j] + beam_range[i][j] * tmin; // "c"ollision "p"oint
+			cp_max[j] = sensor_pos[j] + beam_range[i][j] * tmax; // "c"ollision "p"oint
 		}
-		area_th_min_U[i][aabb.id] = dist_2p3D(sensor_pos[0], sensor_pos[1], sensor_pos[2], cp_min[0], cp_min[1], cp_min[2]);
-		area_th_max_U[i][aabb.id] = dist_2p3D(sensor_pos[0], sensor_pos[1], sensor_pos[2], cp_max[0], cp_max[1], cp_max[2]);
+		area_th_min_U[i] = dist_2p3D(sensor_pos[0], sensor_pos[1], sensor_pos[2], cp_min[0], cp_min[1], cp_min[2]);
+		area_th_max_U[i] = dist_2p3D(sensor_pos[0], sensor_pos[1], sensor_pos[2], cp_max[0], cp_max[1], cp_max[2]);
 	}
 
 	// D
 	for (int i = 0; i < STEP_NUM; ++i)
 	{
-		double beam_range[3]; // センサの観測
-		calc_xyz(angle.dx, angle.dy, SENSOR_RANGE, beam_range[0], beam_range[1], beam_range[2]);
-
 		double tmin = 0.0;
 		double tmax = SENSOR_RANGE;
 		double cp_min[3] = {0.0, 0.0, 0.0};
@@ -143,9 +144,9 @@ void Area::setAreaTh(AABB aabb, BEAMANGLE angle){
 
 		for (int j = 0; j < 3; ++j)
 		{
-			float ood = 1.0 / beam_range[j];
-			float t1 = (aabb.min[j] - sensor_pos[j]) * ood;
-			float t2 = (aabb.max[j] - sensor_pos[j]) * ood;
+			float ood = 1.0 / beam_range[i][j];
+			float t1 = (aabb_min[j] - sensor_pos[j]) * ood;
+			float t2 = (aabb_max[j] - sensor_pos[j]) * ood;
 			if (t1 > t2) swap(t1, t2);
 			if (t1 > tmin) tmin = t1;
             if (t2 > tmax) tmax = t2;
@@ -153,26 +154,20 @@ void Area::setAreaTh(AABB aabb, BEAMANGLE angle){
 		}
 		for (int j = 0; j < 3; ++j)
 		{
-			cp_min[j] = sensor_pos[j] + beam_range[j] * tmin; // "c"ollision "p"oint
-			cp_max[j] = sensor_pos[j] + beam_range[j] * tmax; // "c"ollision "p"oint
+			cp_min[j] = sensor_pos[j] + beam_range[i][j] * tmin; // "c"ollision "p"oint
+			cp_max[j] = sensor_pos[j] + beam_range[i][j] * tmax; // "c"ollision "p"oint
 		}
-		area_th_min_D[i][aabb.id] = dist_2p3D(sensor_pos[0], sensor_pos[1], sensor_pos[2], cp_min[0], cp_min[1], cp_min[2]);
-		area_th_max_D[i][aabb.id] = dist_2p3D(sensor_pos[0], sensor_pos[1], sensor_pos[2], cp_max[0], cp_max[1], cp_max[2]);
+		area_th_min_D[i] = dist_2p3D(sensor_pos[0], sensor_pos[1], sensor_pos[2], cp_min[0], cp_min[1], cp_min[2]);
+		area_th_max_D[i] = dist_2p3D(sensor_pos[0], sensor_pos[1], sensor_pos[2], cp_max[0], cp_max[1], cp_max[2]);
 	}
 }
 
-void Area::set_step_num_cnt_th(int parameter)
+void AreaAABB::defineAABB(double min0, double min1, double min2, double max0, double max1, double max2)
 {
-	step_num_cnt_th = parameter;
-}
-
-void Area::set_buf_num_cnt_th(int parameter)
-{
-	buf_num_cnt_th = parameter;
-}
-
-void Area::set_buf_length_has_objects(int parameter)
-{
-	buf_length_has_objects = parameter;
-	hasObjects_buf.resize(buf_length_has_objects);
+	aabb_min[0] = min0;
+    aabb_min[1] = min1;
+    aabb_min[2] = min2;
+    aabb_max[0] = max0;
+    aabb_max[1] = max1;
+    aabb_max[2] = max2;
 }

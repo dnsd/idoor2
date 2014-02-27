@@ -10,6 +10,7 @@ using namespace std;
 
 void CountDown(int count);
 double dist_2p(double p1_x, double p1_y, double p2_x, double p2_y);
+double dist_2p3D(double p1_x, double p1_y, double p1_z, double p2_x, double p2_y, double p2_z);
 string get_localtime();
 double get_time(void);
 string IntToString(int number);
