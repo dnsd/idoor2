@@ -1,5 +1,4 @@
 #include <iostream>
-// #include <iomanip>
 #include <fstream>
 #include <sys/time.h>
 #include <ssm.hpp>
@@ -13,31 +12,36 @@
 
 using namespace std;
 
-void Area::defineCuboid(double x1, double x2, double y1, double y2, double z1, double z2)
-{
-	sx1 = x1;
-	sx2 = x2;
-	sy1 = y1;
-	sy2 = y2;
-	sz1 = z1;
-	sz2 = z2;
-}
+//-Area-//
 
 bool Area::hasObjects(Step& rd) // "r"ead"d"ata
 {
-	int step_num_cnt = 0;
-	for (int i = 0; i < STEP_NUM; i++)
+	int step_cnt = 0;
+	if (rd.det == 'U')
 	{
-		if (rd.dist[i][CUR_INDEX] != 0.0
-                        && sx1 <= rd.x[i][CUR_INDEX] && rd.x[i][CUR_INDEX] <= sx2
-			&& sy1 <= rd.y[i][CUR_INDEX] && rd.y[i][CUR_INDEX] <= sy2
-			&& sz1 <= rd.z[i][CUR_INDEX] && rd.z[i][CUR_INDEX] <= sz2)
+		for (int i = 0; i < STEP_NUM; ++i)
 		{
-			step_num_cnt++;
+			if (rd.dist[i] != 0.0
+				&& area_th_min_U[i] <= rd.dist[i]
+				&& rd.dist[i] <= area_th_max_U)
+			{
+				step_cnt++;
+			}
+		}
+	}else if (rd.det == 'D')
+	{
+		for (int i = 0; i < STEP_NUM; ++i)
+		{
+			if (rd.dist[i] != 0.0
+				&& area_th_min_D[i] <= rd.dist[i]
+				&& rd.dist[i] <= area_th_max_D)
+			{
+				step_cnt++;
+			}
 		}
 	}
 
-	if (step_num_cnt >= step_num_cnt_th)
+	if (step_num_cnt >= step_cnt_th)
 	{
 		return true;
 	}else{
@@ -65,7 +69,7 @@ int Area::judgeOpen(Step& rd)
         }
     }
 
-    if (buf_num_cnt >= buf_num_cnt_th)
+    if (buf_num_cnt >= buf_cnt_th)
     {
         cout << "buf_num_cnt =" << buf_num_cnt << endl;
         return 4; // 高速全開
@@ -75,41 +79,34 @@ int Area::judgeOpen(Step& rd)
     }
 }
 
-void Area::setAreaTh(AABB aabb){
-	// AABBと直線の交差判定
-	for (int i = 0; i < STEP_NUM; ++i)
-	{
-		double col_pos1 = 0.0;
-		double col_pos2 = 0.0;
-
-
-		if (col_pos1 <= col_pos2)
-		{
-			area_th_min.pop_front();
-			area_th_max.pop_front();
-			area_th_min.push_back(col_pos1);
-			area_th_min.push_back(col_pos2);
-		}else{
-			area_th_min.pop_front();
-			area_th_max.pop_front();
-			area_th_min.push_back(col_pos2);
-			area_th_min.push_back(col_pos1);
-		}
-	}
+void Area::set_step_cnt_th(int parameter)
+{
+	step_cnt_th = parameter;
 }
 
-void Area::set_step_num_cnt_th(int parameter)
+void Area::set_buf_cnt_th(int parameter)
 {
-	step_num_cnt_th = parameter;
+	buf_cnt_th = parameter;
 }
 
-void Area::set_buf_num_cnt_th(int parameter)
+void Area::set_buf_length(int parameter)
 {
-	buf_num_cnt_th = parameter;
+	buf_length = parameter;
+	hasObjects_buf.resize(buf_length);
 }
 
-void Area::set_buf_length_has_objects(int parameter)
+//-AreaAABB-//
+void AreaAABB::calAreaTh()
 {
-	buf_length_has_objects = parameter;
-	hasObjects_buf.resize(buf_length_has_objects);
+	
+}
+
+void AreaAABB::defineAABB(double min0, double min1, double min2, double max0, double max1, double max2)
+{
+	min[0] = min0;
+    min[1] = min1;
+    min[2] = min2;
+    max[0] = max0;
+    max[1] = max1;
+    max[2] = max2;
 }
