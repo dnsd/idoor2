@@ -135,9 +135,9 @@ class AreaAABB : public Area // 軸並行ボックス
     }
 };
 
-class AreaCylinder : public Area　// 円筒形
+class AreaCylinder : public Area // 円筒形
 {
-    // 円筒形のエリアを実装する
+    // 円筒形のエリアを実装する（課題1）
 };
 
 typedef struct{
