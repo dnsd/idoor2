@@ -7,7 +7,7 @@
 
 using namespace std;
 
-void allocate_data_to_tanzaku(TANZAKU_FAC& fac, double steptime[], Step& sd, Cell& cell)
+void allocate_data_to_tanzaku(TANZAKU_FAC& fac, Step& sd, Cell& cell)
 {
     // cell関連のデータの初期化
     for(int i=0; i<TAN_CELL_NUM_MAX; i++) 
@@ -41,7 +41,7 @@ void allocate_data_to_tanzaku(TANZAKU_FAC& fac, double steptime[], Step& sd, Cel
                             cell.sum_x[k][j] += sd.x[i][CUR_INDEX];
                             cell.sum_y[k][j] += sd.y[i][CUR_INDEX];
 
-                            cell.sum_steptime[k][j] += steptime[i];
+                            cell.sum_steptime[k][j] += sd.steptime[i];
                             break;
                         }
                     }

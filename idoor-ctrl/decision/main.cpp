@@ -24,12 +24,6 @@ int stop_cnt = 0;
 
 deque<double> sum_w(BUFFER_LENGTH);
 
-//-タイムゾーン設定用-//
-double steptime[STEP_NUM];
-
-//-開閉判定用-//
-int open_mode_door;
-
 //-時間計測用-//
 double time_1; //時間計測用
 double time_2; //時間計測用
@@ -59,12 +53,6 @@ int main (int argc, char **argv)
     read_tan_fac(fac);
     read_tan_wn(fac);
 
-    // ステップタイムの設定
-    for (int i = 1; i <= STEP_NUM; i++)
-    {
-        steptime[i-1] = FREQ / STEP_NUM * i;
-    }
-
     // 出力の設定
     ofs.open(FILENAME);
     ofs.precision(16);
@@ -82,7 +70,7 @@ int main (int argc, char **argv)
             ped.set_data(OBJECT.data.det, OBJECT.data.dist, OBJECT.data.x, OBJECT.data.y, OBJECT.data.z);
 
             // 短冊を使った位置・速度データの計算
-            allocate_data_to_tanzaku(fac, steptime, ped, cell);
+            allocate_data_to_tanzaku(fac, ped, cell);
             cal_pos_group_near(cell, tanzaku);
             least_square(tanzaku);
 
@@ -115,7 +103,7 @@ int main (int argc, char **argv)
             // ofs << endl;
 
             // open_log出力
-            write_open_log(ped, tanzaku, open_mode_door, SCAN_DATA.time);
+            write_open_log(ped, tanzaku, DORDER.data.order, SCAN_DATA.time);
 
             time_2 = get_time();
             usleep(FREQ*1000000 - (time_2 - time_1)*1000000);
@@ -130,7 +118,7 @@ int main (int argc, char **argv)
             }
             // cout << endl;
             // cout << "time = " << time_3 - time_1 << endl;
-            cout << "open_mode_door = " << open_mode_door << endl; //開き判定のコンソール出力
+            cout << " order = " << DORDER.data.order << endl; //開き判定のコンソール出力
             // cout << SCAN_DATA.time << endl;
             // cout << endl;
         }else{  //if(OBJECTreadNew)

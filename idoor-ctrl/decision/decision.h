@@ -88,17 +88,21 @@ class Step
         vector< deque<double> > x;
         vector< deque<double> > y;
         vector< deque<double> > z;
+        vector<double> steptime;
 
         void set_data(char& read_data_det, double read_data_dist[], double read_data_x[], double read_data_y[], double read_data_z[]);
+        void init_steptime();
         bool isClose(int step_num);
         bool isStop(int step_num);
         
         Step(){
+            // 配列のサイズを変更
             det.resize(BUFFER_LENGTH);
             dist.resize(STEP_NUM);
             x.resize(STEP_NUM);
             y.resize(STEP_NUM);
             z.resize(STEP_NUM);
+            steptime.resize(STEP_NUM);
             for (int i = 0; i < STEP_NUM; i++)
             {
                 dist[i].resize(BUFFER_LENGTH);
@@ -106,6 +110,9 @@ class Step
                 y[i].resize(BUFFER_LENGTH);
                 z[i].resize(BUFFER_LENGTH);
             }
+
+            // 初期化
+            init_steptime();
         }
 };
 
@@ -158,7 +165,7 @@ typedef struct{
 //mystd.cpp
 double get_time(void);
 //tan.cpp
-void allocate_data_to_tanzaku(TANZAKU_FAC& fac, double steptime[], Step& sd, Cell& cell);
+void allocate_data_to_tanzaku(TANZAKU_FAC& fac, Step& sd, Cell& cell);
 void cal_frame_arrival(Tanzaku& tanzaku);
 void cal_pos_group_near(Cell& cell, Tanzaku& tanzaku);
 void cal_w(TANZAKU_FAC& fac, Tanzaku& tanzaku, deque<double>& sum_w);
@@ -180,9 +187,6 @@ int judge_open_mode(int vote1, int vote2, int vote3, int vote4);
 
 //-タイムゾーン設定用-//
 extern double steptime[STEP_NUM];
-
-//-開閉判定用-//
-extern int open_mode_door;
 
 // edge
 extern bool cancel_flag[TANZAKU_NUM_MAX];

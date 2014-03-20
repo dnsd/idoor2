@@ -28,6 +28,14 @@ void Step::set_data(char& read_data_det, double read_data_dist[], double read_da
     }
 }
 
+void Step::init_steptime()
+{
+    for (int i = 1; i <= STEP_NUM; ++i)
+    {
+        steptime[i-1] = FREQ / STEP_NUM * i;
+    }
+}
+
 bool Step::isClose(int step_num)
 {
     double dist_diff = 0.0;
