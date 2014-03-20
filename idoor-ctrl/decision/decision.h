@@ -1,47 +1,48 @@
-#include "myconst.h"
-
 #include <vector>
 #include <algorithm>
 #include <deque>
 #include <iterator>
+#include "myconst.h"
 
 using namespace std;
 
-class Area;
+// ほんとは名前空間をつかうべき？
+
+// class Area;
 class Tanzaku;
 struct Cell;
 class Step;
 class Lane;
 
-class Area
-{
-    public:
-        double sx1, sx2, sy1, sy2, sz1, sz2; // "s"etdata
-        int step_num_cnt_th;
-        int buf_num_cnt_th;
-        int buf_length_has_objects;
-        deque<int> hasObjects_buf;
+// class Area
+// {
+//     public:
+//         double sx1, sx2, sy1, sy2, sz1, sz2; // "s"etdata
+//         int step_num_cnt_th;
+//         int buf_num_cnt_th;
+//         int buf_length_has_objects;
+//         deque<int> hasObjects_buf;
 
-        void defineCuboid(double x1, double x2, double y1, double y2, double z1, double z2);
-        bool hasObjects(Step& readdata);
-        int judgeOpen(Step& readdata);
-        void set_step_num_cnt_th(int parameter);
-        void set_buf_num_cnt_th(int parameter);
-        void set_buf_length_has_objects(int parameter);
-    Area(){
-        sx1 = 0.0;
-        sx2 = 1000.0;
-        sy1 = -1000.0;
-        sy2 = 1000.0;
-        sz1 = 0.0;
-        sz2 = 2000.0;
-        step_num_cnt_th = AREA_C_STEP_NUM_TH; // エリアの中に一定数以上scanpointがあれば物体が存在するとみなす
-        buf_num_cnt_th = BUF_NUM_HAS_OBJECTS; // バッファのうち物体が存在したフレームが一定数以上あればドアを開ける
-        buf_length_has_objects = BUF_LENGTH_HAS_OBJECTS; //バッファの長さ
-        hasObjects_buf.resize(buf_length_has_objects);
-    }
+//         void defineCuboid(double x1, double x2, double y1, double y2, double z1, double z2);
+//         bool hasObjects(Step& readdata);
+//         int judgeOpen(Step& readdata);
+//         void set_step_num_cnt_th(int parameter);
+//         void set_buf_num_cnt_th(int parameter);
+//         void set_buf_length_has_objects(int parameter);
+//     Area(){
+//         sx1 = 0.0;
+//         sx2 = 1000.0;
+//         sy1 = -1000.0;
+//         sy2 = 1000.0;
+//         sz1 = 0.0;
+//         sz2 = 2000.0;
+//         step_num_cnt_th = AREA_C_STEP_NUM_TH; // エリアの中に一定数以上scanpointがあれば物体が存在するとみなす
+//         buf_num_cnt_th = BUF_NUM_HAS_OBJECTS; // バッファのうち物体が存在したフレームが一定数以上あればドアを開ける
+//         buf_length_has_objects = BUF_LENGTH_HAS_OBJECTS; //バッファの長さ
+//         hasObjects_buf.resize(buf_length_has_objects);
+//     }
 
-};
+// };
 
 struct Cell
 {

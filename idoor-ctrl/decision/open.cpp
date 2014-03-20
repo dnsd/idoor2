@@ -1,6 +1,6 @@
-#include "decision.h"
 #include <vector>
 #include <deque>
+#include "decision.h"
 
 using namespace std;
 

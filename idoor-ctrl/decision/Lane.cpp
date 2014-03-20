@@ -1,15 +1,8 @@
 #include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <sys/time.h>
-#include <ssm.hpp>
 #include <cmath>
-#include "decision.h"
-
 #include <vector>
-#include <algorithm>
 #include <deque>
-#include <iterator>
+#include "decision.h"
 
 using namespace std;
 
