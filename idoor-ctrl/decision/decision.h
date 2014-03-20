@@ -172,8 +172,10 @@ void read_tan_fac(TANZAKU_FAC& fac);
 void read_tan_wn(TANZAKU_FAC& fac);
 void write_open_log(Step& sd, Tanzaku& tanzaku, int open_mode, double scantime);
 //open.cpp
-// void judge_open_mode(Tanzaku& tan, Lane& lane, bool B_flag, int& open_mode);
+int judge_open_mode(int vote1);
 int judge_open_mode(int vote1, int vote2);
+int judge_open_mode(int vote1, int vote2, int vote3);
+int judge_open_mode(int vote1, int vote2, int vote3, int vote4);
 
 //-タイムゾーン設定用-//
 extern double steptime[STEP_NUM];
