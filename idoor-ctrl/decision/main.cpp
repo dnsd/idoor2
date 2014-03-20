@@ -70,9 +70,9 @@ int main (int argc, char **argv)
             ped.set_data(OBJECT.data.det, OBJECT.data.dist, OBJECT.data.x, OBJECT.data.y, OBJECT.data.z);
 
             // 短冊を使った位置・速度データの計算
-            allocate_data_to_tanzaku(fac, ped, cell);
-            cal_pos_group_near(cell, tanzaku);
-            least_square(tanzaku);
+            tanzaku.allocateStep(fac, ped, cell);
+            tanzaku.calPos(cell, tanzaku);
+            tanzaku.calSpeed();
 
             // 短冊を使った開き判定
             upd_tan_approach_cnt(tanzaku);//upd_tan_approach_cntの設定

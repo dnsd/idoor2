@@ -7,12 +7,28 @@
 using namespace std;
 
 // ほんとは名前空間をつかうべき？
-
+struct Cell;
+struct TANZAKU_FAC;
 // class Area;
 class Tanzaku;
-struct Cell;
 class Step;
 class Lane;
+
+struct Cell
+{
+        int step_num[TAN_CELL_NUM_MAX][TANZAKU_NUM_MAX]; //セル内にあるステップの数
+        double sum_x[TAN_CELL_NUM_MAX][TANZAKU_NUM_MAX]; //セル内にあるステップのx座標値の合計
+        double sum_y[TAN_CELL_NUM_MAX][TANZAKU_NUM_MAX]; //セル内にあるステップのy座標値の合計
+        double sum_steptime[TAN_CELL_NUM_MAX][TANZAKU_NUM_MAX]; //セル内にあるステップのスキャン時刻の総和
+};
+
+struct TANZAKU_FAC{
+    double a[BORDER_NUM_MAX];
+    double b[BORDER_NUM_MAX];
+    double p0x[TANZAKU_NUM_MAX];
+    double p0y[TANZAKU_NUM_MAX];
+    double wn[TANZAKU_NUM_MAX];//位置データ(tan_pos or tan_x)が1mのときの短冊の幅
+};
 
 // class Area
 // {
@@ -43,14 +59,6 @@ class Lane;
 //     }
 
 // };
-
-struct Cell
-{
-        int step_num[TAN_CELL_NUM_MAX][TANZAKU_NUM_MAX]; //セル内にあるステップの数
-        double sum_x[TAN_CELL_NUM_MAX][TANZAKU_NUM_MAX]; //セル内にあるステップのx座標値の合計
-        double sum_y[TAN_CELL_NUM_MAX][TANZAKU_NUM_MAX]; //セル内にあるステップのy座標値の合計
-        double sum_steptime[TAN_CELL_NUM_MAX][TANZAKU_NUM_MAX]; //セル内にあるステップのスキャン時刻の総和
-};
 
 class Lane
 {
@@ -124,6 +132,9 @@ class Tanzaku
 
         int open_mode[TANZAKU_NUM_MAX]; //短冊ごとの判定結果
 
+        void allocateStep(TANZAKU_FAC& fac, Step& sd, Cell& cell);
+        void calPos(Cell& cell, Tanzaku& tanzaku);
+        void calSpeed();
         bool isInSurveillanceArea(int tan_num, int index);
         bool isInInnerArea(int tan_num, int index);
         bool isInDetectionArea(int tan_num, int index);
@@ -153,21 +164,11 @@ class Tanzaku
         }
 };
 
-typedef struct{
-    double a[BORDER_NUM_MAX];
-    double b[BORDER_NUM_MAX];
-    double p0x[TANZAKU_NUM_MAX];
-    double p0y[TANZAKU_NUM_MAX];
-    double wn[TANZAKU_NUM_MAX];//位置データ(tan_pos or tan_x)が1mのときの短冊の幅
-}TANZAKU_FAC;
-
 //-関数のプロトタイプ宣言-//
 //mystd.cpp
 double get_time(void);
 //tan.cpp
-void allocate_data_to_tanzaku(TANZAKU_FAC& fac, Step& sd, Cell& cell);
 void cal_frame_arrival(Tanzaku& tanzaku);
-void cal_pos_group_near(Cell& cell, Tanzaku& tanzaku);
 void cal_w(TANZAKU_FAC& fac, Tanzaku& tanzaku, deque<double>& sum_w);
 void clear_buf(vector< deque<double> >& G_data_buf, int tan_approach_cnt[]);
 void least_square(Tanzaku& tanzaku);

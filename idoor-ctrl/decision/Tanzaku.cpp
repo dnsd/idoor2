@@ -7,51 +7,6 @@
 
 using namespace std;
 
-void allocate_data_to_tanzaku(TANZAKU_FAC& fac, Step& sd, Cell& cell)
-{
-    // cell関連のデータの初期化
-    for(int i=0; i<TAN_CELL_NUM_MAX; i++) 
-    {
-        for(int j=0; j<TANZAKU_NUM_MAX; j++)
-        {
-            cell.step_num[i][j] = 0.0;
-            cell.sum_x[i][j] = 0.0;
-            cell.sum_y[i][j] = 0.0;
-            cell.sum_steptime[i][j] = 0.0;
-        }
-    }
-
-    // 短冊へのデータの割り当て
-    for(int i=0; i<STEP_NUM; i++)
-    {
-        if (sd.dist[i][CUR_INDEX] != 0.0 && sd.isClose(i) == true) //c_beamを抽出
-        {
-            for (int j = 0; j < TANZAKU_NUM_MAX; j++) //短冊のループ
-            {
-                if (sd.y[i][CUR_INDEX] > fac.a[j] * sd.x[i][CUR_INDEX] + fac.b[j] 
-                        && sd.y[i][CUR_INDEX] < fac.a[j+1] * sd.x[i][CUR_INDEX] + fac.b[j+1])
-                {
-                    for(int k=0; k<TAN_CELL_NUM_MAX; k++)
-                    {
-                        if (TAN_CELL_RES * k < sd.x[i][CUR_INDEX] 
-                                && sd.x[i][CUR_INDEX] <= TAN_CELL_RES * (k+1))
-                        {
-                            cell.step_num[k][j]++;
-
-                            cell.sum_x[k][j] += sd.x[i][CUR_INDEX];
-                            cell.sum_y[k][j] += sd.y[i][CUR_INDEX];
-
-                            cell.sum_steptime[k][j] += sd.steptime[i];
-                            break;
-                        }
-                    }
-                    break;
-                }
-            } //短冊のループおわり
-        }
-    } //ステップのループおわり
-}
-
 //いっことばしの考慮あり
 void cal_frame_arrival(Tanzaku& tanzaku)
 {
@@ -72,76 +27,6 @@ void cal_frame_arrival(Tanzaku& tanzaku)
         }else{
             tanzaku.frame_arrival[tan_num] = 100;
         }
-    }
-}
-
-// グループ全体の重心を位置データとする
-void cal_pos_group_near(Cell& cell, Tanzaku& tanzaku)
-{
-    int tan_num;
-
-    double tan_x_group_near[TANZAKU_NUM_MAX] = {0};
-    double tan_y_group_near[TANZAKU_NUM_MAX] = {0};
-    double tan_scantime_group_near[TANZAKU_NUM_MAX] = {0};
-
-    for (tan_num = 0; tan_num < TANZAKU_NUM_MAX; tan_num++)
-    {
-        int ground_cnt = 0; //谷を見つけるためのカウンタ
-
-        int tan_cell_num = 0; //ループのカウンター
-        int step_num_in_groupA = 0; //グループAに含まれるステップの数
-
-        double sum_x_in_groupA = 0.0;
-        double sum_y_in_groupA = 0.0;
-        double sum_steptime_in_groupA= 0.0;
-
-        //-グルーピングして、グループごとのピークを検出-//
-        //0じゃないヒストグラムまで進む
-        for (tan_cell_num = 0; tan_cell_num < TAN_CELL_NUM_MAX; tan_cell_num++)
-        {
-            if(cell.step_num[tan_cell_num][tan_num] > 0) break;
-        }
-
-        //-groupAに座標データを足し合わせていく-//
-        for (; tan_cell_num < TAN_CELL_NUM_MAX; tan_cell_num++)
-        {
-            if (cell.step_num[tan_cell_num] == 0)
-            {
-                // 谷間を見つける
-                // 2回連続でstep_num_in_cellが空であればグループが終了したとみなす
-                ground_cnt++;
-            }else{
-                step_num_in_groupA += cell.step_num[tan_cell_num][tan_num];
-                sum_x_in_groupA += cell.sum_x[tan_cell_num][tan_num];
-                sum_y_in_groupA += cell.sum_y[tan_cell_num][tan_num];
-                sum_steptime_in_groupA += cell.sum_steptime[tan_cell_num][tan_num];
-                ground_cnt = 0;
-            }
-            if (ground_cnt >= 2) break;
-        }
-
-        //-グループの重心を求める-//
-        if (step_num_in_groupA > 0)
-        {
-            tan_x_group_near[tan_num] = sum_x_in_groupA / step_num_in_groupA;
-            tan_y_group_near[tan_num] = sum_y_in_groupA / step_num_in_groupA;
-            tan_scantime_group_near[tan_num] = sum_steptime_in_groupA / step_num_in_groupA;
-        }else{
-            tan_x_group_near[tan_num] = 0.0;
-            tan_y_group_near[tan_num] = 0.0; 
-            tan_scantime_group_near[tan_num] = 0.0;
-        }
-    } //tanループ
-
-    // バッファに格納
-    for (int i = 0; i < TANZAKU_NUM_MAX; i++)
-    {
-        tanzaku.x[i].pop_front();
-        tanzaku.y[i].pop_front();
-        tanzaku.scan_time[i].pop_front();
-        tanzaku.x[i].push_back(tan_x_group_near[i]);
-        tanzaku.y[i].push_back(tan_y_group_near[i]);
-        tanzaku.scan_time[i].push_back(tan_scantime_group_near[i]);
     }
 }
 
@@ -274,74 +159,6 @@ void judge_open_mode_tan(Tanzaku& tanzaku, deque<double>& sum_w)
     //open_mode_tanの判定と出力おわり//  
 }
 
-void least_square(Tanzaku& tanzaku)
-{
-    double x[TANZAKU_NUM_MAX][BUFFER_LENGTH];
-    double y[TANZAKU_NUM_MAX][BUFFER_LENGTH];
-
-    //-xのわりあて-//
-    for (int i = 0; i < TANZAKU_NUM_MAX; i++)
-    {
-        for (int j = 0; j < BUFFER_LENGTH; j++)
-        {
-            x[i][j] = FREQ * j + tanzaku.scan_time[i][j];
-        }
-    }
-
-    //-yのわりあて-//
-    for(int i=0; i<TANZAKU_NUM_MAX; i++)
-    {
-        for(int j=0; j<BUFFER_LENGTH; j++)
-        {
-            y[i][j] = tanzaku.x[i][j];
-        }
-    }
-
-    //-最小二乗法-// 
-    for (int i = 0; i < TANZAKU_NUM_MAX; i++)
-    {
-        int data_num_cnt = 0;
-        double sum_x = 0.0;
-        double sum_y = 0.0;
-        double sum_xy = 0.0;
-        double sum_xx = 0.0;
-        for (int j = 0; j <BUFFER_LENGTH; j++) //すべてのバッファを計算に使う
-        {
-            if (y[i][j] != 0.0)
-            {
-                sum_x += x[i][j];
-                sum_y += y[i][j];
-                sum_xx += x[i][j] * x[i][j];
-                sum_xy += x[i][j] * y[i][j];
-                data_num_cnt++;
-            }
-        }
-
-        if (data_num_cnt >= 2 && (y[i][CUR_INDEX] != 0.0 || y[i][PRE_INDEX] != 0.0))
-        {
-            // 速度temp_vの算出
-            double temp_v = 0.0;
-            temp_v = (data_num_cnt * sum_xy - sum_x * sum_y) / (data_num_cnt * sum_xx - pow(sum_x, 2));
-            // 速度方向を反転する
-            // v[i] = temp_v * -1;
-            // 算出された速度の評価：値が大きすぎる場合は無効にする。 
-            if (fabs(temp_v) > V_MAX_TH)
-            {
-                tanzaku.v[i].pop_front();
-                tanzaku.v[i].push_back(0.0);
-            }else{
-                // 速度方向を反転する
-                tanzaku.v[i].pop_front();
-                tanzaku.v[i].push_back(temp_v * -1);
-            }
-        }else{
-            tanzaku.v[i].pop_front();
-            tanzaku.v[i].push_back(0.0);
-        }
-
-    }
-}
-
 // 2点間の距離を求める
 double p_dist(double p0x, double p0y, double p1x, double p1y)
 {
@@ -381,6 +198,190 @@ void upd_tan_approach_cnt(Tanzaku& tanzaku)
         {
             tanzaku.approach_cnt[i] = 0;
         }
+    }
+}
+
+void Tanzaku::allocateStep(TANZAKU_FAC& fac, Step& sd, Cell& cell)
+{
+    // cell関連のデータの初期化
+    for(int i=0; i<TAN_CELL_NUM_MAX; i++) 
+    {
+        for(int j=0; j<TANZAKU_NUM_MAX; j++)
+        {
+            cell.step_num[i][j] = 0.0;
+            cell.sum_x[i][j] = 0.0;
+            cell.sum_y[i][j] = 0.0;
+            cell.sum_steptime[i][j] = 0.0;
+        }
+    }
+
+    // 短冊へのデータの割り当て
+    for(int i=0; i<STEP_NUM; i++)
+    {
+        if (sd.dist[i][CUR_INDEX] != 0.0 && sd.isClose(i) == true) //c_beamを抽出
+        {
+            for (int j = 0; j < TANZAKU_NUM_MAX; j++) //短冊のループ
+            {
+                if (sd.y[i][CUR_INDEX] > fac.a[j] * sd.x[i][CUR_INDEX] + fac.b[j] 
+                        && sd.y[i][CUR_INDEX] < fac.a[j+1] * sd.x[i][CUR_INDEX] + fac.b[j+1])
+                {
+                    for(int k=0; k<TAN_CELL_NUM_MAX; k++)
+                    {
+                        if (TAN_CELL_RES * k < sd.x[i][CUR_INDEX] 
+                                && sd.x[i][CUR_INDEX] <= TAN_CELL_RES * (k+1))
+                        {
+                            cell.step_num[k][j]++;
+
+                            cell.sum_x[k][j] += sd.x[i][CUR_INDEX];
+                            cell.sum_y[k][j] += sd.y[i][CUR_INDEX];
+
+                            cell.sum_steptime[k][j] += sd.steptime[i];
+                            break;
+                        }
+                    }
+                    break;
+                }
+            } //短冊のループおわり
+        }
+    } //ステップのループおわり
+}
+
+// グループ全体の重心を位置データとする
+void Tanzaku::calPos(Cell& cell, Tanzaku& tanzaku)
+{
+    int tan_num;
+
+    double tan_x_group_near[TANZAKU_NUM_MAX] = {0};
+    double tan_y_group_near[TANZAKU_NUM_MAX] = {0};
+    double tan_scantime_group_near[TANZAKU_NUM_MAX] = {0};
+
+    for (tan_num = 0; tan_num < TANZAKU_NUM_MAX; tan_num++)
+    {
+        int ground_cnt = 0; //谷を見つけるためのカウンタ
+
+        int tan_cell_num = 0; //ループのカウンター
+        int step_num_in_groupA = 0; //グループAに含まれるステップの数
+
+        double sum_x_in_groupA = 0.0;
+        double sum_y_in_groupA = 0.0;
+        double sum_steptime_in_groupA= 0.0;
+
+        //-グルーピングして、グループごとのピークを検出-//
+        //0じゃないヒストグラムまで進む
+        for (tan_cell_num = 0; tan_cell_num < TAN_CELL_NUM_MAX; tan_cell_num++)
+        {
+            if(cell.step_num[tan_cell_num][tan_num] > 0) break;
+        }
+
+        //-groupAに座標データを足し合わせていく-//
+        for (; tan_cell_num < TAN_CELL_NUM_MAX; tan_cell_num++)
+        {
+            if (cell.step_num[tan_cell_num] == 0)
+            {
+                // 谷間を見つける
+                // 2回連続でstep_num_in_cellが空であればグループが終了したとみなす
+                ground_cnt++;
+            }else{
+                step_num_in_groupA += cell.step_num[tan_cell_num][tan_num];
+                sum_x_in_groupA += cell.sum_x[tan_cell_num][tan_num];
+                sum_y_in_groupA += cell.sum_y[tan_cell_num][tan_num];
+                sum_steptime_in_groupA += cell.sum_steptime[tan_cell_num][tan_num];
+                ground_cnt = 0;
+            }
+            if (ground_cnt >= 2) break;
+        }
+
+        //-グループの重心を求める-//
+        if (step_num_in_groupA > 0)
+        {
+            tan_x_group_near[tan_num] = sum_x_in_groupA / step_num_in_groupA;
+            tan_y_group_near[tan_num] = sum_y_in_groupA / step_num_in_groupA;
+            tan_scantime_group_near[tan_num] = sum_steptime_in_groupA / step_num_in_groupA;
+        }else{
+            tan_x_group_near[tan_num] = 0.0;
+            tan_y_group_near[tan_num] = 0.0; 
+            tan_scantime_group_near[tan_num] = 0.0;
+        }
+    } //tanループ
+
+    // バッファに格納
+    for (int i = 0; i < TANZAKU_NUM_MAX; i++)
+    {
+        tanzaku.x[i].pop_front();
+        tanzaku.y[i].pop_front();
+        tanzaku.scan_time[i].pop_front();
+        tanzaku.x[i].push_back(tan_x_group_near[i]);
+        tanzaku.y[i].push_back(tan_y_group_near[i]);
+        tanzaku.scan_time[i].push_back(tan_scantime_group_near[i]);
+    }
+}
+
+// 最小二乗法で速度を算出
+void Tanzaku::calSpeed()
+{
+    double x[TANZAKU_NUM_MAX][BUFFER_LENGTH];
+    double y[TANZAKU_NUM_MAX][BUFFER_LENGTH];
+
+    //-xのわりあて-//
+    for (int i = 0; i < TANZAKU_NUM_MAX; i++)
+    {
+        for (int j = 0; j < BUFFER_LENGTH; j++)
+        {
+            x[i][j] = FREQ * j + scan_time[i][j];
+        }
+    }
+
+    //-yのわりあて-//
+    for(int i=0; i<TANZAKU_NUM_MAX; i++)
+    {
+        for(int j=0; j<BUFFER_LENGTH; j++)
+        {
+            y[i][j] = x[i][j];
+        }
+    }
+
+    //-最小二乗法-// 
+    for (int i = 0; i < TANZAKU_NUM_MAX; i++)
+    {
+        int data_num_cnt = 0;
+        double sum_x = 0.0;
+        double sum_y = 0.0;
+        double sum_xy = 0.0;
+        double sum_xx = 0.0;
+        for (int j = 0; j <BUFFER_LENGTH; j++) //すべてのバッファを計算に使う
+        {
+            if (y[i][j] != 0.0)
+            {
+                sum_x += x[i][j];
+                sum_y += y[i][j];
+                sum_xx += x[i][j] * x[i][j];
+                sum_xy += x[i][j] * y[i][j];
+                data_num_cnt++;
+            }
+        }
+
+        if (data_num_cnt >= 2 && (y[i][CUR_INDEX] != 0.0 || y[i][PRE_INDEX] != 0.0))
+        {
+            // 速度temp_vの算出
+            double temp_v = 0.0;
+            temp_v = (data_num_cnt * sum_xy - sum_x * sum_y) / (data_num_cnt * sum_xx - pow(sum_x, 2));
+            // 速度方向を反転する
+            // v[i] = temp_v * -1;
+            // 算出された速度の評価：値が大きすぎる場合は無効にする。 
+            if (fabs(temp_v) > V_MAX_TH)
+            {
+                v[i].pop_front();
+                v[i].push_back(0.0);
+            }else{
+                // 速度方向を反転する
+                v[i].pop_front();
+                v[i].push_back(temp_v * -1);
+            }
+        }else{
+            v[i].pop_front();
+            v[i].push_back(0.0);
+        }
+
     }
 }
 
