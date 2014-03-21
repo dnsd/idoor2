@@ -7,29 +7,6 @@
 
 using namespace std;
 
-//いっことばしの考慮あり
-void cal_frame_arrival(Tanzaku& tanzaku)
-{
-    double arrival_temp[TANZAKU_NUM_MAX];
-    for (int tan_num = 0; tan_num < TANZAKU_NUM_MAX; tan_num++)
-    {
-        if (tanzaku.x[tan_num][CUR_INDEX] != 0.0
-                && tanzaku.v[tan_num][CUR_INDEX] > 0.0)
-        {
-            arrival_temp[tan_num] = tanzaku.x[tan_num][CUR_INDEX] / tanzaku.v[tan_num][CUR_INDEX];
-            tanzaku.frame_arrival[tan_num] = arrival_temp[tan_num] / FREQ;
-        }else if (tanzaku.x[tan_num][CUR_INDEX] == 0.0
-                && tanzaku.x[tan_num][PRE_INDEX] != 0.0
-                && tanzaku.v[tan_num][CUR_INDEX] > 0.0) 
-        {
-            arrival_temp[tan_num] = tanzaku.x[tan_num][PRE_INDEX] / tanzaku.v[tan_num][CUR_INDEX];
-            tanzaku.frame_arrival[tan_num] = arrival_temp[tan_num] / FREQ;
-        }else{
-            tanzaku.frame_arrival[tan_num] = 100;
-        }
-    }
-}
-
 void cal_w(TANZAKU_FAC& fac, Tanzaku& tanzaku, deque<double>& sum_w)
 {
     //短冊ごとの幅の算出
@@ -159,44 +136,25 @@ void judge_open_mode_tan(Tanzaku& tanzaku, deque<double>& sum_w)
     //open_mode_tanの判定と出力おわり//  
 }
 
-// 2点間の距離を求める
-double p_dist(double p0x, double p0y, double p1x, double p1y)
+//いっことばしの考慮あり
+void Tanzaku::calArrivalTime()
 {
-    double dist2, dist;
-    dist2 = (p1x - p0x) * (p1x - p0x) + (p1y - p0y) * (p1y - p0y);
-    dist = sqrt(dist2);
-    return dist;
-}
-
-//スキャンの方向を考慮する方法（必ず同じ方向のものと比較する）
-void upd_tan_approach_cnt(Tanzaku& tanzaku)
-{
-    for (int i = 0; i < TANZAKU_NUM_MAX; i++)
+    double arrival_temp[TANZAKU_NUM_MAX];
+    for (int tan_num = 0; tan_num < TANZAKU_NUM_MAX; tan_num++)
     {
-        if (tanzaku.x[i][CUR_INDEX] != 0.0
-                && tanzaku.x[i][PREPRE_INDEX] != 0.0)
+        if (x[tan_num][CUR_INDEX] != 0.0
+                && v[tan_num][CUR_INDEX] > 0.0)
         {
-            if ( (tanzaku.x[i][PREPRE_INDEX] - tanzaku.x[i][CUR_INDEX]) > (2 * MIN_SPEED)) //最低スピード以上ならインクリメント。 //最大スピードについても考えたほうがよい？
-            {
-                if (tanzaku.x[i][PRE_INDEX] != 0.0)
-                {
-                    tanzaku.approach_cnt[i]++;
-                }
-                if (tanzaku.x[i][PRE_INDEX] == 0.0) //PREが0のときは前回のぶんもインクリメント
-                {
-                    tanzaku.approach_cnt[i]++;
-                    tanzaku.approach_cnt[i]++;
-                }
-            }
-            if (tanzaku.x[i][PREPRE_INDEX] - tanzaku.x[i][CUR_INDEX] < (-2 * MIN_SPEED)) //遠ざかったときはクリア
-            {
-                tanzaku.approach_cnt[i] = 0;
-            }
-        }
-        if (tanzaku.x[i][CUR_INDEX] == 0.0
-                && tanzaku.x[i][PRE_INDEX] == 0.0) //物体がないときはクリア
+            arrival_temp[tan_num] = x[tan_num][CUR_INDEX] / v[tan_num][CUR_INDEX];
+            frame_arrival[tan_num] = arrival_temp[tan_num] / FREQ;
+        }else if (x[tan_num][CUR_INDEX] == 0.0
+                && x[tan_num][PRE_INDEX] != 0.0
+                && v[tan_num][CUR_INDEX] > 0.0) 
         {
-            tanzaku.approach_cnt[i] = 0;
+            arrival_temp[tan_num] = x[tan_num][PRE_INDEX] / v[tan_num][CUR_INDEX];
+            frame_arrival[tan_num] = arrival_temp[tan_num] / FREQ;
+        }else{
+            frame_arrival[tan_num] = 100;
         }
     }
 }
@@ -423,3 +381,35 @@ int Tanzaku::judgeOpen(Lane& lane)
     return vote;
 }
 
+//スキャンの方向を考慮する方法（必ず同じ方向のものと比較する）
+void Tanzaku::updApproachCnt()
+{
+    for (int i = 0; i < TANZAKU_NUM_MAX; i++)
+    {
+        if (x[i][CUR_INDEX] != 0.0
+                && x[i][PREPRE_INDEX] != 0.0)
+        {
+            if ( (x[i][PREPRE_INDEX] - x[i][CUR_INDEX]) > (2 * MIN_SPEED)) //最低スピード以上ならインクリメント。 //最大スピードについても考えたほうがよい？
+            {
+                if (x[i][PRE_INDEX] != 0.0)
+                {
+                    approach_cnt[i]++;
+                }
+                if (x[i][PRE_INDEX] == 0.0) //PREが0のときは前回のぶんもインクリメント
+                {
+                    approach_cnt[i]++;
+                    approach_cnt[i]++;
+                }
+            }
+            if (x[i][PREPRE_INDEX] - x[i][CUR_INDEX] < (-2 * MIN_SPEED)) //遠ざかったときはクリア
+            {
+                approach_cnt[i] = 0;
+            }
+        }
+        if (x[i][CUR_INDEX] == 0.0
+            && x[i][PRE_INDEX] == 0.0) //物体がないときはクリア
+        {
+            approach_cnt[i] = 0;
+        }
+    }
+}

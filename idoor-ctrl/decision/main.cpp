@@ -49,9 +49,9 @@ int main (int argc, char **argv)
     Lane lane;
 
     //-初期設定-//
-    initialize_open_log();
-    read_tan_fac(fac);
-    read_tan_wn(fac);
+    log_ctr::initialize_open_log();
+    log_ctr::read_tan_fac(fac);
+    log_ctr::read_tan_wn(fac);
 
     // 出力の設定
     ofs.open(FILENAME);
@@ -75,8 +75,8 @@ int main (int argc, char **argv)
             tanzaku.calSpeed();
 
             // 短冊を使った開き判定
-            upd_tan_approach_cnt(tanzaku);//upd_tan_approach_cntの設定
-            cal_frame_arrival(tanzaku);//歩行者がドアに到達するまでのフレーム数
+            tanzaku.updApproachCnt();
+            tanzaku.calArrivalTime(); //歩行者がドアに到達するまでのフレーム数
             cal_w(fac, tanzaku, sum_w); //幅の算出（tan_xベース）       
             judge_open_mode_tan(tanzaku, sum_w);
 
@@ -84,7 +84,7 @@ int main (int argc, char **argv)
             lane.upd_pending_cnt(tanzaku);
             
             // 最終的な開き命令
-            DORDER.data.order = judge_open_mode(tanzaku.judgeOpen(lane));
+            DORDER.data.order = open::judge_open_mode(tanzaku.judgeOpen(lane));
 
             // SSM書き込み
             DORDER.write();
@@ -103,7 +103,7 @@ int main (int argc, char **argv)
             // ofs << endl;
 
             // open_log出力
-            write_open_log(ped, tanzaku, DORDER.data.order, SCAN_DATA.time);
+            log_ctr::write_open_log(ped, tanzaku, DORDER.data.order, SCAN_DATA.time);
 
             time_2 = get_time();
             usleep(FREQ*1000000 - (time_2 - time_1)*1000000);

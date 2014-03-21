@@ -6,7 +6,7 @@
 
 using namespace std;
 
-void initialize_open_log()
+void log_ctr::initialize_open_log()
 {
     //ファイルオープン
     ofstream olog;
@@ -19,7 +19,7 @@ void initialize_open_log()
     olog.close();
 }
 
-void read_tan_fac(TANZAKU_FAC& fac)
+void log_ctr::read_tan_fac(TANZAKU_FAC& fac)
 {
     FILE *fp;
     //tan_facの読み込み //y=ax+bで考える
@@ -35,7 +35,7 @@ void read_tan_fac(TANZAKU_FAC& fac)
     fclose(fp);
 }
 
-void read_tan_wn(TANZAKU_FAC& fac)
+void log_ctr::read_tan_wn(TANZAKU_FAC& fac)
 {
     FILE *fp;
     //wnの読み込み（tan_xベース）
@@ -48,7 +48,7 @@ void read_tan_wn(TANZAKU_FAC& fac)
 }
 
 // 1スキャンのログを複数行に分ける
-void write_open_log(Step& sd, Tanzaku& tanzaku, int open_mode, double scantime)
+void log_ctr::write_open_log(Step& sd, Tanzaku& tanzaku, int open_mode, double scantime)
 {
     //ファイルオープン
     ofstream olog;

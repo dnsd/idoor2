@@ -6,7 +6,7 @@
 
 using namespace std;
 
-// ほんとは名前空間をつかうべき？
+// ほんとはクラスではなく名前空間をつかうべき？
 struct Cell;
 struct TANZAKU_FAC;
 // class Area;
@@ -132,12 +132,14 @@ class Tanzaku
 
         int open_mode[TANZAKU_NUM_MAX]; //短冊ごとの判定結果
 
+        void calArrivalTime();
         void calSpeed();
         bool isInSurveillanceArea(int tan_num, int index);
         bool isInInnerArea(int tan_num, int index);
         bool isInDetectionArea(int tan_num, int index);
         bool isCancel(Lane& lane, int tan_num);
         int judgeOpen(Lane& lane);
+        void updApproachCnt();
 
         vector< deque<double> > x;
         vector< deque<double> > y;
@@ -282,23 +284,28 @@ class Tanzaku
 //mystd.cpp
 double get_time(void);
 //tan.cpp
-void cal_frame_arrival(Tanzaku& tanzaku);
 void cal_w(TANZAKU_FAC& fac, Tanzaku& tanzaku, deque<double>& sum_w);
 void clear_buf(vector< deque<double> >& G_data_buf, int tan_approach_cnt[]);
 void least_square(Tanzaku& tanzaku);
 void judge_open_mode_tan(Tanzaku& tanzaku, deque<double>& sum_w);
-double p_dist(double p0x, double p0y, double p1x, double p1y);
-void upd_tan_approach_cnt(Tanzaku& tanzaku);
-//log_ctr.cpp
-void initialize_open_log();
-void read_tan_fac(TANZAKU_FAC& fac);
-void read_tan_wn(TANZAKU_FAC& fac);
-void write_open_log(Step& sd, Tanzaku& tanzaku, int open_mode, double scantime);
-//open.cpp
-int judge_open_mode(int vote1);
-int judge_open_mode(int vote1, int vote2);
-int judge_open_mode(int vote1, int vote2, int vote3);
-int judge_open_mode(int vote1, int vote2, int vote3, int vote4);
+
+namespace log_ctr
+{
+    //log_ctr.cpp
+    void initialize_open_log();
+    void read_tan_fac(TANZAKU_FAC& fac);
+    void read_tan_wn(TANZAKU_FAC& fac);
+    void write_open_log(Step& sd, Tanzaku& tanzaku, int open_mode, double scantime);
+}
+
+namespace open
+{
+    //open.cpp
+    int judge_open_mode(int vote1);
+    int judge_open_mode(int vote1, int vote2);
+    int judge_open_mode(int vote1, int vote2, int vote3);
+    int judge_open_mode(int vote1, int vote2, int vote3, int vote4);
+}
 
 //-タイムゾーン設定用-//
 extern double steptime[STEP_NUM];
