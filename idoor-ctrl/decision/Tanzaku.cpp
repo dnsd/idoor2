@@ -7,135 +7,6 @@
 
 using namespace std;
 
-void cal_w(TANZAKU_FAC& fac, Tanzaku& tanzaku, deque<double>& sum_w)
-{
-    //短冊ごとの幅の算出
-    for(int i=0; i<TANZAKU_NUM_MAX; i++)
-    {
-        tanzaku.w[i].pop_front();
-        tanzaku.w[i].push_back(0.0);
-        if(tanzaku.x[i][CUR_INDEX] != 0.0)
-        {
-            tanzaku.w[i][CUR_INDEX] = fac.wn[i] * tanzaku.x[i][CUR_INDEX] / 1000.0;
-        }
-        if(tanzaku.x[i][CUR_INDEX] == 0.0 && tanzaku.x[i][PRE_INDEX] != 0.0)
-        {
-            tanzaku.w[i][CUR_INDEX] = fac.wn[i] * tanzaku.x[i][PRE_INDEX] / 1000.0; //位置データが無かったら一つ前のデータで補完   
-        }
-    }
-
-    // 位置データが存在する短冊のうち端どうしの距離を幅とする方法
-    int w_left = 0;
-    int w_right = 0;
-    double sum_w_cur = 0.0;
-    for (int i = 0; i < TANZAKU_NUM_MAX; i++) //有効な短冊の範囲ぶん
-    {
-        if (tanzaku.approach_cnt[i] >= 2)
-        {
-            w_left = i;
-            break;
-        }
-    }
-    for (int i = TANZAKU_NUM_MAX; i > 0; i--) //有効な短冊の範囲ぶん
-    {
-        if (tanzaku.approach_cnt[i] >= 2)
-        {
-            w_right = i;
-            break;
-        }
-    }
-    if (tanzaku.w[w_left][CUR_INDEX] <= tanzaku.w[w_right][CUR_INDEX])
-    {
-        sum_w_cur = tanzaku.w[w_right][CUR_INDEX] * (w_right - w_left + 1);
-    }else{
-        sum_w_cur = tanzaku.w[w_left][CUR_INDEX] * (w_right - w_left + 1);
-    }
-
-    sum_w.pop_front();
-    sum_w.push_back(sum_w_cur);
-
-}
-
-// 速度変化が大きすぎるときにデータを無視する
-void clear_buf(vector< deque<double> >& G_data_buf)
-{
-    for (int i = 0; i < TANZAKU_NUM_MAX; i++)
-    {
-        if (fabs(G_data_buf[i][PRE_INDEX] - G_data_buf[i][CUR_INDEX]) > MAX_SPEED 
-                && G_data_buf[i][CUR_INDEX] != 0.0 
-                && G_data_buf[i][PRE_INDEX] != 0.0)
-        {
-            for (int j = 0; j < BUFFER_LENGTH; j++)
-            {
-                G_data_buf[i][j] = 0.0;
-            }
-        }
-        if (fabs(G_data_buf[i][PREPRE_INDEX] - G_data_buf[i][CUR_INDEX]) > (2 * MAX_SPEED) 
-                && G_data_buf[i][CUR_INDEX] != 0.0
-                && G_data_buf[i][PRE_INDEX] == 0.0 
-                && G_data_buf[i][PREPRE_INDEX] != 0.0)
-        {
-            for (int j = 0; j < BUFFER_LENGTH; j++)
-            {
-                G_data_buf[i][j] = 0.0;
-            }
-        }
-    }
-}
-
-// frame_observeを使用しない
-void judge_open_mode_tan(Tanzaku& tanzaku, deque<double>& sum_w)
-{
-    //-初期化-//
-    for (int i = 0; i < TANZAKU_NUM_MAX; i++)
-    {
-        tanzaku.open_mode[i] = 0;
-    }
-
-    //-open_mode_tanの判定と出力-//
-    if (sum_w[CUR_INDEX] <= DOOR_W_TH)
-    {
-        for (int i = 0; i < TANZAKU_NUM_MAX; i++)
-        {
-            //open_mode_tanの計算
-            if (tanzaku.approach_cnt[i] >= FRAME_OBSERVE 
-                    && tanzaku.approach_cnt != 0) //?
-            {
-                if (tanzaku.frame_arrival[i] <= (REQUIRED_FRAME_HIGH_HALF + MARGIN) )
-                {
-                    tanzaku.open_mode[i] = 2; //高速半開
-                }else if ( (REQUIRED_FRAME_HIGH_HALF + MARGIN) < tanzaku.frame_arrival[i] 
-                        && tanzaku.frame_arrival[i] <= (REQUIRED_FRAME_NORMAL_HALF + MARGIN) )
-                {
-                    tanzaku.open_mode[i] = 1; //低速半開
-                }else{
-                    tanzaku.open_mode[i] = 0; //開けない
-                }
-            }
-        }  
-    }else{
-        for (int i = 0; i < TANZAKU_NUM_MAX; i++)
-        {
-            //open_mode_tanの計算
-            if (tanzaku.approach_cnt[i] >= FRAME_OBSERVE 
-                    && tanzaku.approach_cnt != 0)
-            {
-                if (tanzaku.frame_arrival[i] <= (REQUIRED_FRAME_HIGH_FULL + MARGIN) )
-                {
-                    tanzaku.open_mode[i] = 4; //高速全開
-                }else if ( (REQUIRED_FRAME_HIGH_HALF + MARGIN) < tanzaku.frame_arrival[i] 
-                        && tanzaku.frame_arrival[i] <= (REQUIRED_FRAME_NORMAL_FULL + MARGIN) )
-                {
-                    tanzaku.open_mode[i] = 3; //低速全開
-                }else{
-                    tanzaku.open_mode[i] = 0; //開けない
-                }
-            }
-        } 
-    }
-    //open_mode_tanの判定と出力おわり//  
-}
-
 //いっことばしの考慮あり
 void Tanzaku::calArrivalTime()
 {
@@ -157,6 +28,55 @@ void Tanzaku::calArrivalTime()
             frame_arrival[tan_num] = 100;
         }
     }
+}
+
+void Tanzaku::calObjectWidth(TANZAKU_FAC& fac)
+{
+    //短冊ごとの幅の算出
+    for(int i=0; i<TANZAKU_NUM_MAX; i++)
+    {
+        w[i].pop_front();
+        w[i].push_back(0.0);
+        if(x[i][CUR_INDEX] != 0.0)
+        {
+            w[i][CUR_INDEX] = fac.wn[i] * x[i][CUR_INDEX] / 1000.0;
+        }
+        if(x[i][CUR_INDEX] == 0.0 && x[i][PRE_INDEX] != 0.0)
+        {
+            w[i][CUR_INDEX] = fac.wn[i] * x[i][PRE_INDEX] / 1000.0; //位置データが無かったら一つ前のデータで補完   
+        }
+    }
+
+    // 位置データが存在する短冊のうち端どうしの距離を幅とする方法
+    int w_left = 0;
+    int w_right = 0;
+    double w_sum_cur = 0.0;
+    for (int i = 0; i < TANZAKU_NUM_MAX; i++) //有効な短冊の範囲ぶん
+    {
+        if (approach_cnt[i] >= 2)
+        {
+            w_left = i;
+            break;
+        }
+    }
+    for (int i = TANZAKU_NUM_MAX; i > 0; i--) //有効な短冊の範囲ぶん
+    {
+        if (approach_cnt[i] >= 2)
+        {
+            w_right = i;
+            break;
+        }
+    }
+    if (w[w_left][CUR_INDEX] <= w[w_right][CUR_INDEX])
+    {
+        w_sum_cur = w[w_right][CUR_INDEX] * (w_right - w_left + 1);
+    }else{
+        w_sum_cur = w[w_left][CUR_INDEX] * (w_right - w_left + 1);
+    }
+
+    w_sum.pop_front();
+    w_sum.push_back(w_sum_cur);
+
 }
 
 // 最小二乗法で速度を算出
@@ -354,31 +274,57 @@ bool Tanzaku::isInSurveillanceArea(int tan_num, int index)
     }
 }
 
-int Tanzaku::judgeOpen(Lane& lane)
+// frame_observeを使用しない
+void Tanzaku::judgeOpen()
 {
-    int vote = 0;
-
-    //-open_modeの判定と出力-//
-    for (int tan_num = 0; tan_num < TANZAKU_NUM_MAX; tan_num++)
+    //-初期化-//
+    for (int i = 0; i < TANZAKU_NUM_MAX; i++)
     {
-        if (isCancel(lane, tan_num) == false)
-        {
-            if (open_mode[tan_num] == 4)
-            {
-                return 4;
-            }else if (open_mode[tan_num] == 2)
-            {
-                return 2;
-            }else if (open_mode[tan_num] == 3)
-            {
-                vote = 3;
-            }else if (open_mode[tan_num] == 1)
-            {
-                vote = 1;
-            }
-        }   
+        open_mode[i] = 0;
     }
-    return vote;
+
+    //-open_mode_tanの判定と出力-//
+    if (w_sum[CUR_INDEX] <= DOOR_W_TH)
+    {
+        for (int i = 0; i < TANZAKU_NUM_MAX; i++)
+        {
+            //open_mode_tanの計算
+            if (approach_cnt[i] >= FRAME_OBSERVE 
+                    && approach_cnt != 0) //?
+            {
+                if (frame_arrival[i] <= (REQUIRED_FRAME_HIGH_HALF + MARGIN) )
+                {
+                    open_mode[i] = 2; //高速半開
+                }else if ( (REQUIRED_FRAME_HIGH_HALF + MARGIN) < frame_arrival[i] 
+                        && frame_arrival[i] <= (REQUIRED_FRAME_NORMAL_HALF + MARGIN) )
+                {
+                    open_mode[i] = 1; //低速半開
+                }else{
+                    open_mode[i] = 0; //開けない
+                }
+            }
+        }  
+    }else{
+        for (int i = 0; i < TANZAKU_NUM_MAX; i++)
+        {
+            //open_mode_tanの計算
+            if (approach_cnt[i] >= FRAME_OBSERVE 
+                    && approach_cnt != 0)
+            {
+                if (frame_arrival[i] <= (REQUIRED_FRAME_HIGH_FULL + MARGIN) )
+                {
+                    open_mode[i] = 4; //高速全開
+                }else if ( (REQUIRED_FRAME_HIGH_HALF + MARGIN) < frame_arrival[i] 
+                        && frame_arrival[i] <= (REQUIRED_FRAME_NORMAL_FULL + MARGIN) )
+                {
+                    open_mode[i] = 3; //低速全開
+                }else{
+                    open_mode[i] = 0; //開けない
+                }
+            }
+        } 
+    }
+    //open_mode_tanの判定と出力おわり//  
 }
 
 //スキャンの方向を考慮する方法（必ず同じ方向のものと比較する）
@@ -412,4 +358,31 @@ void Tanzaku::updApproachCnt()
             approach_cnt[i] = 0;
         }
     }
+}
+
+int Tanzaku::vote(Lane& lane)
+{
+    int vote = 0;
+
+    //-open_modeの判定と出力-//
+    for (int tan_num = 0; tan_num < TANZAKU_NUM_MAX; tan_num++)
+    {
+        if (isCancel(lane, tan_num) == false)
+        {
+            if (open_mode[tan_num] == 4)
+            {
+                return 4;
+            }else if (open_mode[tan_num] == 2)
+            {
+                return 2;
+            }else if (open_mode[tan_num] == 3)
+            {
+                vote = 3;
+            }else if (open_mode[tan_num] == 1)
+            {
+                vote = 1;
+            }
+        }   
+    }
+    return vote;
 }

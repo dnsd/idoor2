@@ -21,7 +21,6 @@ const int CUR_INDEX = BUFFER_LENGTH - 1;
 const int PRE_INDEX = BUFFER_LENGTH - 2;
 const int PREPRE_INDEX = BUFFER_LENGTH - 3;
 
-
 const double MAX_SPEED = 150.0; //フィルタを更新するorしないのしきい値（mm）//3.0m/s
 const double MIN_SPEED = 15.0; //0.15m/s
 const double V_MAX_TH = 3000.0; //3000mm/s以上で移動する人は観測しない
@@ -29,10 +28,6 @@ const double V_MAX_TH = 3000.0; //3000mm/s以上で移動する人は観測し�
 const int BORDER_NUM_MAX = 29; //短冊の境界線の本数
 
 //-ドア-//
-// const double DOOR_V_NORMAL = 1000.0; //単位はmm/sec、両開き
-// const double DOOR_V_HIGH = 1800.0; //単位はmm/sec、両開き
-// const double DOOR_W_HALF = 800.0; //単位はmm
-// const double DOOR_W_FULL = 1800.0; //暫定
 const int REQUIRED_FRAME_NORMAL_HALF = 16; //ゆっくりドアを開くときの所要フレーム数（半開き）
 const int REQUIRED_FRAME_NORMAL_FULL = 36;
 const int REQUIRED_FRAME_HIGH_HALF = 14; //素早くドアを開くときの所要フレーム数 （半開き）
@@ -60,14 +55,3 @@ const double AREA_D_START_Y = AREA_S_START_Y + AREA_D_MARGIN;
 const double AREA_D_END_Y = AREA_S_END_Y - AREA_D_MARGIN;
 const double AREA_D_START_X = 0.0;
 const double AREA_D_END_X = AREA_S_END_X - AREA_D_MARGIN;
-
-// エリアC("C"onventional)の定義
-const double AREA_C_START_Y = -1000.0; //検出エリアの範囲の設定
-const double AREA_C_END_Y = 1000.0; //検出エリアの範囲の設定
-const double AREA_C_START_X = 0.0; //検出エリアの範囲の設定
-const double AREA_C_END_X = 1000.0; //検出エリアの範囲の設定
-const double AREA_C_START_Z = 0.0; //検出エリアの範囲の設定
-const double AREA_C_END_Z = 2000.0; //検出エリアの範囲の設定
-const int AREA_C_STEP_NUM_TH = 20; // エリアの中に一定数以上scanpointがあれば物体が存在するとみなす
-const int BUF_LENGTH_HAS_OBJECTS = 10; //バッファの長さ
-const int BUF_NUM_HAS_OBJECTS = 7; // バッファのうち物体が存在したフレームが一定数以上あればドアを開ける

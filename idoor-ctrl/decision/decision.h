@@ -30,34 +30,8 @@ struct TANZAKU_FAC{
     double wn[TANZAKU_NUM_MAX];//位置データ(tan_pos or tan_x)が1mのときの短冊の幅
 };
 
-// class Area
-// {
-//     public:
-//         double sx1, sx2, sy1, sy2, sz1, sz2; // "s"etdata
-//         int step_num_cnt_th;
-//         int buf_num_cnt_th;
-//         int buf_length_has_objects;
-//         deque<int> hasObjects_buf;
-
-//         void defineCuboid(double x1, double x2, double y1, double y2, double z1, double z2);
-//         bool hasObjects(Step& readdata);
-//         int judgeOpen(Step& readdata);
-//         void set_step_num_cnt_th(int parameter);
-//         void set_buf_num_cnt_th(int parameter);
-//         void set_buf_length_has_objects(int parameter);
-//     Area(){
-//         sx1 = 0.0;
-//         sx2 = 1000.0;
-//         sy1 = -1000.0;
-//         sy2 = 1000.0;
-//         sz1 = 0.0;
-//         sz2 = 2000.0;
-//         step_num_cnt_th = AREA_C_STEP_NUM_TH; // エリアの中に一定数以上scanpointがあれば物体が存在するとみなす
-//         buf_num_cnt_th = BUF_NUM_HAS_OBJECTS; // バッファのうち物体が存在したフレームが一定数以上あればドアを開ける
-//         buf_length_has_objects = BUF_LENGTH_HAS_OBJECTS; //バッファの長さ
-//         hasObjects_buf.resize(buf_length_has_objects);
-//     }
-
+// class Area{
+//     // ここにAreaクラスを宣言    
 // };
 
 class Lane
@@ -126,6 +100,7 @@ class Step
 
 class Tanzaku
 {
+    // 「Tanzaku」という単語が短冊1本と、短冊全体を指していてまぎらわしい
     public:
         int frame_arrival[TANZAKU_NUM_MAX];//何フレーム後にドアを開けるべきか
         int approach_cnt[TANZAKU_NUM_MAX]; //連続して観測すると増えていく
@@ -133,18 +108,21 @@ class Tanzaku
         int open_mode[TANZAKU_NUM_MAX]; //短冊ごとの判定結果
 
         void calArrivalTime();
+        void calObjectWidth(TANZAKU_FAC& fac);
         void calSpeed();
         bool isInSurveillanceArea(int tan_num, int index);
         bool isInInnerArea(int tan_num, int index);
         bool isInDetectionArea(int tan_num, int index);
         bool isCancel(Lane& lane, int tan_num);
-        int judgeOpen(Lane& lane);
+        void judgeOpen();
         void updApproachCnt();
+        int vote(Lane& lane);
 
         vector< deque<double> > x;
         vector< deque<double> > y;
         vector< deque<double> > v;
-        vector< deque<double> > w;
+        vector< deque<double> > w; //短冊1本の幅
+        deque<double> w_sum; //短冊の幅の合計
         vector< deque<double> > scan_time;
 
         Tanzaku(){
@@ -152,6 +130,7 @@ class Tanzaku
             y.resize(TANZAKU_NUM_MAX);
             v.resize(TANZAKU_NUM_MAX);
             w.resize(TANZAKU_NUM_MAX);
+            w_sum.resize(BUFFER_LENGTH);
             scan_time.resize(TANZAKU_NUM_MAX);
             for (int i = 0; i < TANZAKU_NUM_MAX; i++)
             {
@@ -283,11 +262,6 @@ class Tanzaku
 //-関数のプロトタイプ宣言-//
 //mystd.cpp
 double get_time(void);
-//tan.cpp
-void cal_w(TANZAKU_FAC& fac, Tanzaku& tanzaku, deque<double>& sum_w);
-void clear_buf(vector< deque<double> >& G_data_buf, int tan_approach_cnt[]);
-void least_square(Tanzaku& tanzaku);
-void judge_open_mode_tan(Tanzaku& tanzaku, deque<double>& sum_w);
 
 namespace log_ctr
 {
@@ -306,9 +280,3 @@ namespace open
     int judge_open_mode(int vote1, int vote2, int vote3);
     int judge_open_mode(int vote1, int vote2, int vote3, int vote4);
 }
-
-//-タイムゾーン設定用-//
-extern double steptime[STEP_NUM];
-
-// edge
-extern bool cancel_flag[TANZAKU_NUM_MAX];

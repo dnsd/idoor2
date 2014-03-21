@@ -18,17 +18,6 @@ ofstream ofs;
 //-短冊の形状データ-//
 TANZAKU_FAC fac;
 
-//-B判定用-//
-bool B_flag = false;
-int stop_cnt = 0;
-
-deque<double> sum_w(BUFFER_LENGTH);
-
-//-時間計測用-//
-double time_1; //時間計測用
-double time_2; //時間計測用
-double time_3; //時間計測用
-
 //-SSM-//
 SSMApi<LS3D> SCAN_DATA("LS3D", 0);
 SSMApi<LS3D> OBJECT("OBJECT", 1);
@@ -42,7 +31,7 @@ int main (int argc, char **argv)
     OBJECT.open(SSM_READ);
     DORDER.create(5.0, 1.0);
 
-    //-クラス-//
+    //-クラスのインスタンス-//
     Tanzaku tanzaku;
     Cell cell;
     Step ped;
@@ -63,30 +52,30 @@ int main (int argc, char **argv)
     {
         if (OBJECT.readNew())//if(OBJECTreadNew)
         {
+            double time_loop_start = get_time();
             SCAN_DATA.readNew(); //scantimeの読み込み用
-            time_1 = get_time();
 
             //-読み込みデータのセット-//
             ped.set_data(OBJECT.data.det, OBJECT.data.dist, OBJECT.data.x, OBJECT.data.y, OBJECT.data.z);
 
-            // 短冊を使った位置・速度データの計算
+            //-短冊を使った位置・速度データの計算-//
             tanzaku.allocateStep(fac, ped, cell);
             tanzaku.calPos(cell, tanzaku);
             tanzaku.calSpeed();
 
-            // 短冊を使った開き判定
+            //-短冊を使った開き判定-//
             tanzaku.updApproachCnt();
             tanzaku.calArrivalTime(); //歩行者がドアに到達するまでのフレーム数
-            cal_w(fac, tanzaku, sum_w); //幅の算出（tan_xベース）       
-            judge_open_mode_tan(tanzaku, sum_w);
+            tanzaku.calObjectWidth(fac); //幅の算出（tan_xベース）
+            tanzaku.judgeOpen();
 
-            // レーンを使った素通りのキャンセル
+            //-レーンを使った素通りのキャンセル-//
             lane.upd_pending_cnt(tanzaku);
             
-            // 最終的な開き命令
-            DORDER.data.order = open::judge_open_mode(tanzaku.judgeOpen(lane));
+            //-最終的な開き命令-//
+            DORDER.data.order = open::judge_open_mode(tanzaku.vote(lane));
 
-            // SSM書き込み
+            //-SSM書き込み-//
             DORDER.write();
 
             //-結果のファイル出力-//
@@ -99,28 +88,21 @@ int main (int argc, char **argv)
             {
                 // ofs << cancel_lane_flag[i] << ",";
             }
-
             // ofs << endl;
-
             // open_log出力
-            log_ctr::write_open_log(ped, tanzaku, DORDER.data.order, SCAN_DATA.time);
+            // log_ctr::write_open_log(ped, tanzaku, DORDER.data.order, SCAN_DATA.time);
 
-            time_2 = get_time();
-            usleep(FREQ*1000000 - (time_2 - time_1)*1000000);
-            time_3 = get_time();
+            //-周期の調整-//
+            double time_loop_end = get_time();
+            usleep(FREQ*1000000 - (time_loop_end - time_loop_start)*1000000);
 
             //-結果の標準出力-//
             for (int i = 0; i < TANZAKU_NUM_MAX; i++)
             {
-                // cout << tanzaku.v[i][CUR_INDEX];
-                // cout << tanzaku.frame_arrival[i] << ",";
                 // cout << tanzaku.open_mode[i] << ",";
             }
             // cout << endl;
-            // cout << "time = " << time_3 - time_1 << endl;
             cout << " order = " << DORDER.data.order << endl; //開き判定のコンソール出力
-            // cout << SCAN_DATA.time << endl;
-            // cout << endl;
         }else{  //if(OBJECTreadNew)
             usleep(1000); //CPU使用率100％対策
         } 
